@@ -1,0 +1,68 @@
+.integrations-hub {
+  width: 100%;
+  height: 100%;
+}
+
+.hub-tabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 2rem 0 2rem;
+  border-bottom: 2px solid var(--dark-border);
+  background: var(--dark-bg);
+}
+
+.hub-tab {
+  padding: 1rem 2rem;
+  background: transparent;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.hub-tab:hover {
+  color: var(--neon-green);
+  transform: translateY(-2px);
+}
+
+.hub-tab.active {
+  color: var(--neon-green);
+}
+
+.hub-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+  box-shadow: 0 0 15px var(--neon-green);
+  animation: tabGlow 2s ease-in-out infinite;
+}
+
+@keyframes tabGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px var(--neon-green);
+  }
+  50% {
+    box-shadow: 0 0 25px var(--neon-green);
+  }
+}
+
+.hub-content {
+  width: 100%;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+/* Remove padding from child components since we have it here */
+.hub-content .ai-integrations,
+.hub-content .analytics-dashboard {
+  padding-top: 0;
+}

@@ -1,0 +1,137 @@
+/* Task Selection */
+.task-list {
+  max-height: 400px;
+  overflow-y: auto;
+  margin: 1.5rem 0;
+}
+
+.task-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #2a2a2a;
+  border: 2px solid #333;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.task-item:hover {
+  border-color: #555;
+}
+
+.task-item.selected {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.05);
+}
+
+.task-radio {
+  flex-shrink: 0;
+}
+
+.task-radio input[type='radio'] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #00ff88;
+}
+
+.task-content {
+  flex: 1;
+}
+
+.task-content h4 {
+  color: #e0e0e0;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.task-content p {
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.task-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Timer Modal */
+.timer-modal {
+  max-width: 500px;
+  text-align: center;
+}
+
+.timer-container {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 2rem auto;
+}
+
+.timer-circle {
+  width: 100%;
+  height: 100%;
+}
+
+.timer-progress {
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.timer-display .time {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #00ff88;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-display .label {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.timer-info {
+  display: flex;
+  justify-content: space-around;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #2a2a2a;
+  border-radius: 12px;
+}
+
+.info-item {
+  text-align: center;
+}
+
+.info-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.info-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #00ff88;
+}

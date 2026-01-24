@@ -1,0 +1,156 @@
+.terminal-container {
+  padding: 2rem;
+  height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.terminal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.terminal-icon {
+  font-size: 2rem;
+}
+
+.terminal-title h2 {
+  font-size: 2rem;
+  background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.terminal-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.cwd-display {
+  font-size: 0.85rem;
+  color: #888;
+  font-family: 'Courier New', monospace;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.terminal-window {
+  flex: 1;
+  background: #000;
+  border: 2px solid #00ff88;
+  border-radius: 12px;
+  padding: 1rem;
+  font-family: 'Courier New', Consolas, monospace;
+  overflow-y: auto;
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+}
+
+.terminal-output {
+  min-height: calc(100% - 40px);
+}
+
+.terminal-line {
+  margin-bottom: 0.25rem;
+  line-height: 1.5;
+}
+
+.terminal-line pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: inherit;
+}
+
+.terminal-line.command {
+  color: #00ff88;
+  font-weight: 600;
+}
+
+.terminal-line.output {
+  color: #e0e0e0;
+}
+
+.terminal-line.error {
+  color: #ff4444;
+}
+
+.terminal-line.loading {
+  color: #ffc800;
+  animation: pulse 1.5s infinite;
+}
+
+.terminal-input-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.prompt {
+  color: #00ff88;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #00ff88;
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 1rem;
+  outline: none;
+}
+
+.terminal-input::placeholder {
+  color: #555;
+}
+
+.terminal-footer {
+  margin-top: 1rem;
+}
+
+.quick-commands {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.quick-commands button {
+  padding: 0.5rem 1rem;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 6px;
+  color: #00ff88;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-commands button:hover {
+  background: rgba(0, 255, 136, 0.2);
+  transform: scale(1.05);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

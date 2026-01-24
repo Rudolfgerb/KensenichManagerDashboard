@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Test</title>
+    <style>
+        :root {
+            --neon-green: #00ff88;
+            --neon-green-glow: rgba(0, 255, 136, 0.5);
+            --dark-bg: #0a0a0a;
+            --dark-card: #1a1a1a;
+            --dark-border: #333;
+            --light-bg: #f5f5f5;
+            --light-card: #ffffff;
+            --light-border: #e0e0e0;
+            --text-color: #e0e0e0;
+            --text-color-light: #333333;
+            --primary-text: #e0e0e0;
+            --secondary-text: #aaa;
+            --primary-text-light: #333333;
+            --secondary-text-light: #666666;
+        }
+
+        .dark-mode {
+            --current-bg: var(--dark-bg);
+            --current-card: var(--dark-card);
+            --current-border: var(--dark-border);
+            --current-text: var(--text-color);
+            --current-primary-text: var(--primary-text);
+            --current-secondary-text: var(--secondary-text);
+        }
+
+        .light-mode {
+            --current-bg: var(--light-bg);
+            --current-card: var(--light-card);
+            --current-border: var(--light-border);
+            --current-text: var(--text-color-light);
+            --current-primary-text: var(--primary-text-light);
+            --current-secondary-text: var(--secondary-text-light);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--current-bg);
+            color: var(--current-text);
+            transition: all 0.3s ease;
+            padding: 2rem;
+        }
+
+        .card {
+            background: var(--current-card);
+            border: 1px solid var(--current-border);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .theme-toggle {
+            background: var(--neon-green);
+            color: var(--current-bg);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <h1>Theme System Test</h1>
+    <div class="card">
+        <h2>Test Card</h2>
+        <p>This is a test card to verify the theme system works correctly.</p>
+        <p>Current theme: <span id="current-theme">dark</span></p>
+    </div>
+    
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+    
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = document.getElementById('current-theme');
+            
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                currentTheme.textContent = 'light';
+            } else {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                currentTheme.textContent = 'dark';
+            }
+        }
+    </script>
+</body>
+</html>
