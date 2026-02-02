@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Dashboard from './components/Dashboard/Dashboard';
 import CRM from './components/CRM/CRM';
@@ -13,56 +14,71 @@ import GlobalSearch from './components/GlobalSearch/GlobalSearch';
 import IntegrationsHub from './components/IntegrationsHub/IntegrationsHub';
 import { ThemeToggle } from './components/ThemeToggle/ThemeToggle';
 import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider, useToast } from './components/Toast/Toast';
+import { setToastCallback } from './services/api';
 import './App.css';
+
+// Component to connect Toast with API service
+function ToastConnector() {
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    setToastCallback(showToast);
+    return () => setToastCallback(() => {});
+  }, [showToast]);
+
+  return null;
+}
 
 function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <div className="app">
-        <header className="header">
-          <div className="header-brand">
-            <Link to="/" className="header-logo-link">
-              <img src="/images/logowortmarke.png" alt="Kensenich" className="header-logo" />
-            </Link>
-          </div>
-          <nav className="nav">
-            <Link to="/">Dashboard</Link>
-            <Link to="/content">Content</Link>
-            <Link to="/branding">Branding</Link>
-            <Link to="/crm">CRM</Link>
-            <Link to="/integrations">AI & Analytics</Link>
-            <Link to="/goals">Goals</Link>
-            <Link to="/jobs">Jobs</Link>
-            <Link to="/mutuus">Mutuus</Link>
-            <Link to="/files">Files</Link>
-            <Link to="/terminal">Terminal</Link>
-          </nav>
-          <div className="header-actions">
-            <GlobalSearch />
-            <ThemeToggle />
-          </div>
-        </header>
+      <ToastProvider>
+        <ToastConnector />
+        <BrowserRouter>
+          <div className="app">
+            <header className="header">
+              <div className="header-brand">
+                <Link to="/" className="header-logo-link">
+                  <img src="/images/logowortmarke.png" alt="Kensenich" className="header-logo" />
+                </Link>
+              </div>
+              <nav className="nav" role="navigation" aria-label="Hauptnavigation">
+                <Link to="/">Dashboard</Link>
+                <Link to="/content">Content</Link>
+                <Link to="/crm">CRM</Link>
+                <Link to="/integrations">AI & Analytics</Link>
+                <Link to="/goals">Goals</Link>
+                <Link to="/jobs">Jobs</Link>
+                <Link to="/mutuus">Mutuus</Link>
+                <Link to="/files">Files</Link>
+              </nav>
+              <div className="header-actions">
+                <GlobalSearch />
+                <ThemeToggle />
+              </div>
+            </header>
 
-        <main className="main">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/content" element={<ContentPlan />} />
-            <Route path="/branding" element={<BrandingBoard />} />
-            <Route path="/crm" element={<CRM />} />
-            <Route path="/integrations" element={<IntegrationsHub />} />
-            <Route path="/goals" element={<GoalTracker />} />
-            <Route path="/jobs" element={<JobTracker />} />
-            <Route path="/mutuus" element={<MutuusLaunch />} />
-            <Route path="/files" element={<FileManager />} />
-            <Route path="/terminal" element={<Terminal />} />
-          </Routes>
-        </main>
+            <main className="main" role="main">
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/content" element={<ContentPlan />} />
+                <Route path="/branding" element={<BrandingBoard />} />
+                <Route path="/crm" element={<CRM />} />
+                <Route path="/integrations" element={<IntegrationsHub />} />
+                <Route path="/goals" element={<GoalTracker />} />
+                <Route path="/jobs" element={<JobTracker />} />
+                <Route path="/mutuus" element={<MutuusLaunch />} />
+                <Route path="/files" element={<FileManager />} />
+                <Route path="/terminal" element={<Terminal />} />
+              </Routes>
+            </main>
+          </div>
 
-        {/* AI Assistant - Always visible */}
-        <AIAssistant />
-      </div>
-    </BrowserRouter>
+          {/* AI Assistant - Outside .app div to ensure position:fixed works */}
+          <AIAssistant />
+        </BrowserRouter>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

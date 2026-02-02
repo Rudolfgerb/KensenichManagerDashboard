@@ -35,14 +35,56 @@ export async function initializeDatabase() {
         description TEXT,
         status TEXT DEFAULT 'todo',
         priority INTEGER DEFAULT 0,
+        difficulty INTEGER DEFAULT 1,
         estimated_sessions INTEGER DEFAULT 1,
         category TEXT DEFAULT 'general',
         tags TEXT,
         due_date DATETIME,
+        goal_id TEXT,
+        parent_task_id TEXT,
+        order_index INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        completed_at DATETIME,
+        FOREIGN KEY (goal_id) REFERENCES goals(id) ON DELETE SET NULL,
+        FOREIGN KEY (parent_task_id) REFERENCES tasks(id) ON DELETE SET NULL
       )
     `);
+
+    // Add new columns if they don't exist (for existing databases)
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN goal_id TEXT');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN parent_task_id TEXT');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN order_index INTEGER DEFAULT 0');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN completed_at DATETIME');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN difficulty INTEGER DEFAULT 1');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN due_date DATETIME');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN estimated_sessions INTEGER DEFAULT 1');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN category TEXT DEFAULT "general"');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN tags TEXT');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN depends_on TEXT');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE tasks ADD COLUMN completion_date DATE');
+    } catch (e) { /* Column may already exist */ }
 
     // Work Sessions table
     await runAsync(`
@@ -560,6 +602,461 @@ export async function initializeDatabase() {
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // ═══ AI Agent Memory Tables ═══
+
+    // AI Conversations table
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS ai_conversations (
+        id TEXT PRIMARY KEY,
+        title TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // AI Messages table
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS ai_messages (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL,
+        role TEXT NOT NULL,
+        content TEXT,
+        tool_name TEXT,
+        tool_result TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (conversation_id) REFERENCES ai_conversations(id) ON DELETE CASCADE
+      )
+    `);
+
+    // AI User Facts table (Episodic Memory)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS ai_user_facts (
+        id TEXT PRIMARY KEY,
+        category TEXT DEFAULT 'info',
+        key TEXT UNIQUE,
+        value TEXT,
+        source TEXT DEFAULT 'explicit',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Daily Habits table (für Agent Tool Access)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS daily_habits (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        target_count INTEGER DEFAULT 5,
+        checked_count INTEGER DEFAULT 0,
+        completed INTEGER DEFAULT 0,
+        last_reset DATE,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Daily Habits History table (speichert vergangene Tage)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS daily_habits_history (
+        id TEXT PRIMARY KEY,
+        habit_id TEXT NOT NULL,
+        habit_title TEXT NOT NULL,
+        date DATE NOT NULL,
+        target_count INTEGER NOT NULL,
+        checked_count INTEGER NOT NULL,
+        completed INTEGER NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (habit_id) REFERENCES daily_habits(id) ON DELETE CASCADE,
+        UNIQUE(habit_id, date)
+      )
+    `);
+
+    // Insert default habits if empty
+    const habitsExist = await getAsync('SELECT COUNT(*) as count FROM daily_habits');
+    if (habitsExist.count === 0) {
+      const defaultHabits = [
+        { id: 'habit-1', title: 'Bewerbungen schreiben', target_count: 5 },
+        { id: 'habit-2', title: 'Outreach Kontakt anfragen / Nachrichten', target_count: 5 },
+        { id: 'habit-3', title: 'Sätze Hantel Training', target_count: 5 }
+      ];
+      for (const habit of defaultHabits) {
+        await runAsync(`
+          INSERT INTO daily_habits (id, title, target_count, last_reset)
+          VALUES (?, ?, ?, date('now'))
+        `, [habit.id, habit.title, habit.target_count]);
+      }
+    }
+
+    // AI Agents table
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS ai_agents (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT,
+        system_prompt TEXT,
+        model TEXT DEFAULT 'llama3.2',
+        hierarchy TEXT DEFAULT 'worker',
+        parent_id TEXT,
+        active INTEGER DEFAULT 1,
+        config TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (parent_id) REFERENCES ai_agents(id) ON DELETE SET NULL
+      )
+    `);
+
+    // Social Media Profiles table
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS social_profiles (
+        id TEXT PRIMARY KEY,
+        platform TEXT NOT NULL,
+        username TEXT,
+        access_token TEXT,
+        refresh_token TEXT,
+        token_expires_at DATETIME,
+        connected INTEGER DEFAULT 0,
+        followers INTEGER DEFAULT 0,
+        following INTEGER DEFAULT 0,
+        posts INTEGER DEFAULT 0,
+        engagement_rate REAL DEFAULT 0,
+        last_sync DATETIME,
+        profile_data TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Social Media Metrics table (for historical data)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS social_metrics (
+        id TEXT PRIMARY KEY,
+        profile_id TEXT NOT NULL,
+        metric_date DATE NOT NULL,
+        followers INTEGER DEFAULT 0,
+        following INTEGER DEFAULT 0,
+        posts INTEGER DEFAULT 0,
+        likes INTEGER DEFAULT 0,
+        comments INTEGER DEFAULT 0,
+        shares INTEGER DEFAULT 0,
+        reach INTEGER DEFAULT 0,
+        impressions INTEGER DEFAULT 0,
+        engagement_rate REAL DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (profile_id) REFERENCES social_profiles(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Insert default social profiles if empty
+    const profilesExist = await getAsync('SELECT COUNT(*) as count FROM social_profiles');
+    if (profilesExist.count === 0) {
+      const defaultProfiles = [
+        { id: 'profile-instagram', platform: 'Instagram' },
+        { id: 'profile-youtube', platform: 'YouTube' },
+        { id: 'profile-tiktok', platform: 'TikTok' },
+        { id: 'profile-twitter', platform: 'Twitter/X' },
+        { id: 'profile-linkedin', platform: 'LinkedIn' },
+        { id: 'profile-facebook', platform: 'Facebook' }
+      ];
+      for (const profile of defaultProfiles) {
+        await runAsync(`
+          INSERT INTO social_profiles (id, platform)
+          VALUES (?, ?)
+        `, [profile.id, profile.platform]);
+      }
+    }
+
+    // ═══ CRM Enhancement Tables ═══
+
+    // Email Accounts table (for IMAP/SMTP/OAuth integration)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS email_accounts (
+        id TEXT PRIMARY KEY,
+        provider TEXT NOT NULL,
+        email_address TEXT NOT NULL UNIQUE,
+        display_name TEXT,
+        imap_host TEXT,
+        imap_port INTEGER DEFAULT 993,
+        smtp_host TEXT,
+        smtp_port INTEGER DEFAULT 587,
+        username TEXT,
+        encrypted_password TEXT,
+        access_token TEXT,
+        refresh_token TEXT,
+        token_expires_at DATETIME,
+        last_sync DATETIME,
+        sync_enabled INTEGER DEFAULT 1,
+        is_default INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // CRM Emails table (sent/received emails with tracking)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS crm_emails (
+        id TEXT PRIMARY KEY,
+        email_account_id TEXT,
+        contact_id TEXT,
+        message_id TEXT UNIQUE,
+        thread_id TEXT,
+        in_reply_to TEXT,
+        direction TEXT NOT NULL,
+        from_address TEXT NOT NULL,
+        to_addresses TEXT NOT NULL,
+        cc_addresses TEXT,
+        bcc_addresses TEXT,
+        subject TEXT,
+        body_text TEXT,
+        body_html TEXT,
+        attachments TEXT,
+        status TEXT DEFAULT 'draft',
+        scheduled_at DATETIME,
+        sent_at DATETIME,
+        received_at DATETIME,
+        is_read INTEGER DEFAULT 0,
+        is_starred INTEGER DEFAULT 0,
+        is_archived INTEGER DEFAULT 0,
+        folder TEXT DEFAULT 'inbox',
+        tracking_pixel_id TEXT UNIQUE,
+        template_id TEXT,
+        open_count INTEGER DEFAULT 0,
+        click_count INTEGER DEFAULT 0,
+        replied INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (email_account_id) REFERENCES email_accounts(id) ON DELETE SET NULL,
+        FOREIGN KEY (contact_id) REFERENCES crm_contacts(id) ON DELETE SET NULL,
+        FOREIGN KEY (template_id) REFERENCES message_templates(id) ON DELETE SET NULL
+      )
+    `);
+
+    // Email Tracking Events table (opens, clicks, replies)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS email_tracking_events (
+        id TEXT PRIMARY KEY,
+        email_id TEXT NOT NULL,
+        event_type TEXT NOT NULL,
+        event_data TEXT,
+        ip_address TEXT,
+        user_agent TEXT,
+        geo_location TEXT,
+        occurred_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (email_id) REFERENCES crm_emails(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Email Tracked Links table (for click tracking)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS email_tracked_links (
+        id TEXT PRIMARY KEY,
+        email_id TEXT NOT NULL,
+        original_url TEXT NOT NULL,
+        click_count INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (email_id) REFERENCES crm_emails(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Calendar Attendees table
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS calendar_attendees (
+        id TEXT PRIMARY KEY,
+        event_id TEXT NOT NULL,
+        contact_id TEXT,
+        email TEXT NOT NULL,
+        name TEXT,
+        status TEXT DEFAULT 'pending',
+        is_organizer INTEGER DEFAULT 0,
+        response_time DATETIME,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (event_id) REFERENCES calendar_events(id) ON DELETE CASCADE,
+        FOREIGN KEY (contact_id) REFERENCES crm_contacts(id) ON DELETE SET NULL
+      )
+    `);
+
+    // Calendar Reminders table
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS calendar_reminders (
+        id TEXT PRIMARY KEY,
+        event_id TEXT NOT NULL,
+        reminder_type TEXT NOT NULL,
+        minutes_before INTEGER NOT NULL,
+        sent INTEGER DEFAULT 0,
+        sent_at DATETIME,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (event_id) REFERENCES calendar_events(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Calendar Sync Accounts table (Google Calendar, Outlook)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS calendar_sync_accounts (
+        id TEXT PRIMARY KEY,
+        provider TEXT NOT NULL,
+        email TEXT NOT NULL,
+        access_token TEXT,
+        refresh_token TEXT,
+        token_expires_at DATETIME,
+        calendar_id TEXT,
+        sync_direction TEXT DEFAULT 'both',
+        last_sync DATETIME,
+        sync_token TEXT,
+        is_active INTEGER DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // CRM Deals table (HubSpot-style deal management)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS crm_deals (
+        id TEXT PRIMARY KEY,
+        contact_id TEXT NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        stage_id TEXT NOT NULL,
+        deal_value REAL DEFAULT 0,
+        currency TEXT DEFAULT 'EUR',
+        probability INTEGER DEFAULT 50,
+        expected_close_date DATETIME,
+        actual_close_date DATETIME,
+        deal_source TEXT,
+        deal_type TEXT,
+        priority TEXT DEFAULT 'medium',
+        owner_id TEXT,
+        status TEXT DEFAULT 'open',
+        lost_reason TEXT,
+        lost_reason_details TEXT,
+        tags TEXT,
+        custom_fields TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (contact_id) REFERENCES crm_contacts(id) ON DELETE CASCADE,
+        FOREIGN KEY (stage_id) REFERENCES sales_pipeline_stages(id) ON DELETE RESTRICT
+      )
+    `);
+
+    // Deal Line Items table (products/services per deal)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS deal_line_items (
+        id TEXT PRIMARY KEY,
+        deal_id TEXT NOT NULL,
+        product_name TEXT NOT NULL,
+        description TEXT,
+        quantity INTEGER DEFAULT 1,
+        unit_price REAL NOT NULL,
+        discount_percent REAL DEFAULT 0,
+        total_price REAL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (deal_id) REFERENCES crm_deals(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Deal Activities table (timeline)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS deal_activities (
+        id TEXT PRIMARY KEY,
+        deal_id TEXT NOT NULL,
+        activity_type TEXT NOT NULL,
+        title TEXT,
+        description TEXT,
+        related_entity_type TEXT,
+        related_entity_id TEXT,
+        metadata TEXT,
+        created_by TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (deal_id) REFERENCES crm_deals(id) ON DELETE CASCADE
+      )
+    `);
+
+    // CRM Tasks table (linked to contacts/deals)
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS crm_tasks (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT,
+        task_type TEXT DEFAULT 'todo',
+        priority TEXT DEFAULT 'normal',
+        status TEXT DEFAULT 'pending',
+        due_date DATETIME,
+        due_time TEXT,
+        contact_id TEXT,
+        deal_id TEXT,
+        assigned_to TEXT,
+        reminder_at DATETIME,
+        completed_at DATETIME,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (contact_id) REFERENCES crm_contacts(id) ON DELETE SET NULL,
+        FOREIGN KEY (deal_id) REFERENCES crm_deals(id) ON DELETE SET NULL
+      )
+    `);
+
+    // Contact Scores table
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS contact_scores (
+        id TEXT PRIMARY KEY,
+        contact_id TEXT NOT NULL UNIQUE,
+        engagement_score INTEGER DEFAULT 0,
+        fit_score INTEGER DEFAULT 0,
+        overall_score INTEGER DEFAULT 0,
+        last_activity_date DATETIME,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (contact_id) REFERENCES crm_contacts(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Contact Score History table
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS contact_score_history (
+        id TEXT PRIMARY KEY,
+        contact_id TEXT NOT NULL,
+        score_type TEXT NOT NULL,
+        score_change INTEGER NOT NULL,
+        new_total INTEGER NOT NULL,
+        reason TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (contact_id) REFERENCES crm_contacts(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Add new columns to crm_contacts for CRM enhancement
+    try {
+      await runAsync('ALTER TABLE crm_contacts ADD COLUMN lifecycle_stage TEXT DEFAULT "lead"');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE crm_contacts ADD COLUMN engagement_score INTEGER DEFAULT 0');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE crm_contacts ADD COLUMN fit_score INTEGER DEFAULT 0');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE crm_contacts ADD COLUMN owner_id TEXT');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE crm_contacts ADD COLUMN preferred_contact_method TEXT DEFAULT "email"');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE crm_contacts ADD COLUMN last_activity_date DATETIME');
+    } catch (e) { /* Column may already exist */ }
+
+    // Add new columns to calendar_events for enhanced features
+    try {
+      await runAsync('ALTER TABLE calendar_events ADD COLUMN google_event_id TEXT');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE calendar_events ADD COLUMN sync_account_id TEXT');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE calendar_events ADD COLUMN recurrence_rule TEXT');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE calendar_events ADD COLUMN video_link TEXT');
+    } catch (e) { /* Column may already exist */ }
+    try {
+      await runAsync('ALTER TABLE calendar_events ADD COLUMN related_deal_id TEXT');
+    } catch (e) { /* Column may already exist */ }
 
     console.log('✅ Database initialized successfully');
 

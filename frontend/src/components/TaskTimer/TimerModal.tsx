@@ -15,6 +15,7 @@ export default function TimerModal({ task, onComplete, onStop }: TimerModalProps
   const [secondsLeft, setSecondsLeft] = useState(TIMER_DURATION);
   const [isRunning, setIsRunning] = useState(false);
   const [sessionId, setSessionId] = useState<string>('');
+  const [isMinimized, setIsMinimized] = useState(false);
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -123,10 +124,58 @@ export default function TimerModal({ task, onComplete, onStop }: TimerModalProps
   const circumference = 2 * Math.PI * 120;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
+  // Mini timer circumference
+  const miniCircumference = 2 * Math.PI * 22;
+  const miniStrokeDashoffset = miniCircumference - (progress / 100) * miniCircumference;
+
+  // Minimized floating widget
+  if (isMinimized) {
+    return (
+      <div className="timer-minimized" onClick={() => setIsMinimized(false)}>
+        <div className="timer-mini-circle">
+          <svg viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="22" fill="none" stroke="#2a2a2a" strokeWidth="3" />
+            <circle
+              cx="25" cy="25" r="22"
+              fill="none" stroke="#00ff88" strokeWidth="3"
+              strokeDasharray={miniCircumference}
+              strokeDashoffset={miniStrokeDashoffset}
+              transform="rotate(-90 25 25)"
+            />
+          </svg>
+          <span className="mini-time">{formatTime(secondsLeft)}</span>
+        </div>
+        <div className="timer-mini-info">
+          <span className="mini-task">{task.title.substring(0, 20)}{task.title.length > 20 ? '...' : ''}</span>
+          <span className="mini-status">{isRunning ? '▶' : '⏸'}</span>
+        </div>
+        <button
+          className="mini-stop-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleStop();
+          }}
+          title="Stop"
+        >
+          ✕
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="modal-overlay">
       <div className="modal timer-modal">
-        <h2>{task.title}</h2>
+        <div className="timer-header">
+          <h2>{task.title}</h2>
+          <button
+            className="btn-minimize"
+            onClick={() => setIsMinimized(true)}
+            title="Minimieren"
+          >
+            ─
+          </button>
+        </div>
 
         <div className="timer-container">
           <svg className="timer-circle" viewBox="0 0 260 260">

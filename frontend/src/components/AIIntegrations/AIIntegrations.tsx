@@ -5,7 +5,7 @@ import './AIIntegrations.css';
 interface Integration {
   id: string;
   name: string;
-  category: 'ai' | 'communication' | 'productivity' | 'social' | 'crm' | 'calendar' | 'storage';
+  category: 'local-ai' | 'automation' | 'ai' | 'communication' | 'productivity' | 'social' | 'crm' | 'calendar' | 'storage';
   icon: string;
   description: string;
   connected: boolean;
@@ -14,8 +14,53 @@ interface Integration {
   features: string[];
 }
 
+// // Priority integrations that should NOT be in "Weitere"
+// const PRIORITY_INTEGRATIONS = [
+//   'Ollama', 'LM Studio', 'n8n', 'Docker',
+//   'OpenAI GPT-4', 'Anthropic Claude', 'Google Gemini', 'Midjourney', 'ElevenLabs',
+//   'Gmail', 'Google Calendar', 'Google Docs', 'Google Sheets', 'Google Drive',
+//   'Telegram', 'WhatsApp Business', 'Slack', 'Discord',
+//   'Facebook', 'Instagram', 'TikTok', 'Twitter/X', 'LinkedIn',
+//   'HubSpot', 'Notion', 'Zapier', 'Make (Integromat)'
+// ];
+
+// Integrations to move to "Weitere" collapsible section
+const WEITERE_INTEGRATIONS = ['Asana', 'Pipedrive', 'Salesforce', 'Trello'];
+
 const AVAILABLE_INTEGRATIONS: Omit<Integration, 'id' | 'connected' | 'apiKey' | 'config'>[] = [
-  // AI & LLM Models
+  // 🔥 LOCAL AI - Priority (Ollama & LM Studio)
+  {
+    name: 'Ollama',
+    category: 'local-ai',
+    icon: '🦙',
+    description: 'Lokale LLMs - Llama 3, Mistral, CodeLlama, Phi & mehr',
+    features: ['100% Lokal', 'Privatsphäre', 'Kostenlos', 'Offline-fähig']
+  },
+  {
+    name: 'LM Studio',
+    category: 'local-ai',
+    icon: '🖥️',
+    description: 'Desktop App für lokale LLMs mit GUI',
+    features: ['GGUF Models', 'Chat UI', 'API Server', 'Model Library']
+  },
+
+  // 🔧 AUTOMATION & DEVOPS
+  {
+    name: 'n8n',
+    category: 'automation',
+    icon: '🔗',
+    description: 'Self-hosted Workflow Automation Platform',
+    features: ['Visual Builder', 'Webhooks', '400+ Nodes', 'Self-hosted']
+  },
+  {
+    name: 'Docker',
+    category: 'automation',
+    icon: '🐳',
+    description: 'Container Management & Deployment',
+    features: ['Containers', 'Images', 'Compose', 'Volumes']
+  },
+
+  // AI & LLM Models (Cloud)
   {
     name: 'OpenAI GPT-4',
     category: 'ai',
@@ -225,6 +270,7 @@ export default function AIIntegrations() {
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
+  const [showWeitere, setShowWeitere] = useState(false);
 
   useEffect(() => {
     loadIntegrations();
@@ -272,7 +318,7 @@ export default function AIIntegrations() {
     setIsConnecting(true);
 
     try {
-      const response = await axios.post('/api/integrations/connect', {
+      await axios.post('/api/integrations/connect', {
         integrationId: selectedIntegration.id,
         name: selectedIntegration.name,
         apiKey: apiKeyInput,
@@ -320,7 +366,8 @@ export default function AIIntegrations() {
     }
   };
 
-  const filteredIntegrations = Array.isArray(integrations)
+  // Split integrations into main and "weitere"
+  const allFiltered = Array.isArray(integrations)
     ? integrations.filter(int => {
         const matchesCategory = selectedCategory === 'all' || int.category === selectedCategory;
         const matchesSearch = int.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -329,9 +376,14 @@ export default function AIIntegrations() {
       })
     : [];
 
+  const filteredIntegrations = allFiltered.filter(int => !WEITERE_INTEGRATIONS.includes(int.name));
+  const weitereIntegrations = allFiltered.filter(int => WEITERE_INTEGRATIONS.includes(int.name));
+
   const categories = [
     { id: 'all', label: 'Alle', icon: '🌐' },
-    { id: 'ai', label: 'AI & LLM', icon: '🤖' },
+    { id: 'local-ai', label: 'Lokal AI', icon: '🦙' },
+    { id: 'automation', label: 'Automation', icon: '🔗' },
+    { id: 'ai', label: 'Cloud AI', icon: '🤖' },
     { id: 'communication', label: 'Kommunikation', icon: '💬' },
     { id: 'social', label: 'Social Media', icon: '📱' },
     { id: 'crm', label: 'CRM & Sales', icon: '💼' },
@@ -444,10 +496,81 @@ export default function AIIntegrations() {
         ))}
       </div>
 
-      {filteredIntegrations.length === 0 && (
+      {filteredIntegrations.length === 0 && weitereIntegrations.length === 0 && (
         <div className="empty-state">
           <span className="empty-icon">🔍</span>
           <p>Keine Integrationen gefunden</p>
+        </div>
+      )}
+
+      {/* Weitere Integrationen - Collapsible */}
+      {weitereIntegrations.length > 0 && (
+        <div className="weitere-section">
+          <button
+            className={`weitere-toggle ${showWeitere ? 'open' : ''}`}
+            onClick={() => setShowWeitere(!showWeitere)}
+          >
+            <span className="weitere-icon">📦</span>
+            <span className="weitere-title">Weitere Integrationen</span>
+            <span className="weitere-count">{weitereIntegrations.length}</span>
+            <span className="weitere-arrow">{showWeitere ? '▲' : '▼'}</span>
+          </button>
+
+          {showWeitere && (
+            <div className="weitere-grid">
+              {weitereIntegrations.map(integration => (
+                <div
+                  key={integration.id}
+                  className={`integration-card weitere-card ${integration.connected ? 'connected' : ''}`}
+                >
+                  <div className="integration-header">
+                    <div className="integration-icon">{integration.icon}</div>
+                    <div className="integration-info">
+                      <h3>{integration.name}</h3>
+                      <span className="integration-category">{integration.category}</span>
+                    </div>
+                    {integration.connected && (
+                      <span className="connected-badge">✓ Verbunden</span>
+                    )}
+                  </div>
+
+                  <p className="integration-description">{integration.description}</p>
+
+                  <div className="integration-features">
+                    {integration.features.slice(0, 4).map((feature, idx) => (
+                      <span key={idx} className="feature-tag">{feature}</span>
+                    ))}
+                  </div>
+
+                  <div className="integration-actions">
+                    {integration.connected ? (
+                      <>
+                        <button
+                          className="btn-test"
+                          onClick={() => alert('Test-Funktion in Entwicklung')}
+                        >
+                          🧪 Testen
+                        </button>
+                        <button
+                          className="btn-disconnect"
+                          onClick={() => handleDisconnect(integration)}
+                        >
+                          🔌 Trennen
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className="btn-connect"
+                        onClick={() => handleConnect(integration)}
+                      >
+                        ⚡ Verbinden
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

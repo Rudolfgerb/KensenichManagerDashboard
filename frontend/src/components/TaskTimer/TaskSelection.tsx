@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { getPendingTasks, createTask } from '../../services/api';
 import type { Task } from '../../types';
 import './TaskTimer.css';
@@ -14,6 +15,11 @@ export default function TaskSelection({ onSelect, onCancel }: TaskSelectionProps
   const [showNewTask, setShowNewTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');
+
+  // Edit state
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
 
   useEffect(() => {
     loadTasks();
@@ -49,6 +55,69 @@ export default function TaskSelection({ onSelect, onCancel }: TaskSelectionProps
     }
   };
 
+  // Delete task
+  const handleDeleteTask = async (taskId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    if (!window.confirm(`Task "${task.title}" wirklich löschen?`)) {
+      return;
+    }
+
+    try {
+      await axios.delete(`http://localhost:3001/api/tasks/${taskId}`);
+      setTasks(tasks.filter(t => t.id !== taskId));
+      if (selectedTaskId === taskId) {
+        setSelectedTaskId('');
+      }
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+      alert('Fehler beim Löschen des Tasks');
+    }
+  };
+
+  // Start editing task
+  const startEditTask = (task: Task, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingTaskId(task.id);
+    setEditTitle(task.title);
+    setEditDescription(task.description || '');
+  };
+
+  // Save task edit
+  const saveTaskEdit = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!editingTaskId || !editTitle.trim()) return;
+
+    try {
+      await axios.put(`http://localhost:3001/api/tasks/${editingTaskId}`, {
+        title: editTitle.trim(),
+        description: editDescription
+      });
+
+      setTasks(tasks.map(t =>
+        t.id === editingTaskId
+          ? { ...t, title: editTitle.trim(), description: editDescription }
+          : t
+      ));
+      setEditingTaskId(null);
+    } catch (error) {
+      console.error('Failed to update task:', error);
+      alert('Fehler beim Speichern');
+    }
+  };
+
+  // Cancel edit
+  const cancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingTaskId(null);
+    setEditTitle('');
+    setEditDescription('');
+  };
+
   const handleStart = () => {
     const task = tasks.find(t => t.id === selectedTaskId);
     if (task) {
@@ -70,24 +139,65 @@ export default function TaskSelection({ onSelect, onCancel }: TaskSelectionProps
                 tasks.map((task) => (
                   <div
                     key={task.id}
-                    className={`task-item ${selectedTaskId === task.id ? 'selected' : ''}`}
-                    onClick={() => setSelectedTaskId(task.id)}
+                    className={`task-item ${selectedTaskId === task.id ? 'selected' : ''} ${editingTaskId === task.id ? 'editing' : ''}`}
+                    onClick={() => editingTaskId !== task.id && setSelectedTaskId(task.id)}
                   >
-                    <div className="task-radio">
-                      <input
-                        type="radio"
-                        checked={selectedTaskId === task.id}
-                        onChange={() => setSelectedTaskId(task.id)}
-                      />
-                    </div>
-                    <div className="task-content">
-                      <h4>{task.title}</h4>
-                      {task.description && <p>{task.description}</p>}
-                      <div className="task-meta">
-                        <span className="priority">Priorität: {task.priority}</span>
-                        <span className="sessions">~{task.estimated_sessions} Sessions</span>
+                    {editingTaskId === task.id ? (
+                      <div className="task-edit-inline" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="text"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          placeholder="Task-Name"
+                          className="task-edit-input"
+                          autoFocus
+                        />
+                        <textarea
+                          value={editDescription}
+                          onChange={(e) => setEditDescription(e.target.value)}
+                          placeholder="Beschreibung (optional)"
+                          className="task-edit-textarea"
+                        />
+                        <div className="task-edit-buttons">
+                          <button className="btn-task-save" onClick={saveTaskEdit}>✓ Speichern</button>
+                          <button className="btn-task-cancel" onClick={cancelEdit}>✕ Abbrechen</button>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <>
+                        <div className="task-radio">
+                          <input
+                            type="radio"
+                            checked={selectedTaskId === task.id}
+                            onChange={() => setSelectedTaskId(task.id)}
+                          />
+                        </div>
+                        <div className="task-content">
+                          <h4>{task.title}</h4>
+                          {task.description && <p>{task.description}</p>}
+                          <div className="task-meta">
+                            <span className="priority">Priorität: {task.priority}</span>
+                            <span className="sessions">~{task.estimated_sessions} Sessions</span>
+                          </div>
+                        </div>
+                        <div className="task-item-actions">
+                          <button
+                            className="btn-task-edit"
+                            onClick={(e) => startEditTask(task, e)}
+                            title="Bearbeiten"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            className="btn-task-delete"
+                            onClick={(e) => handleDeleteTask(task.id, e)}
+                            title="Löschen"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))
               )}

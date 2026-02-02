@@ -413,3 +413,1220 @@
     padding: 1rem;
   }
 }
+
+/* ============================================
+   CRM TABS
+   ============================================ */
+
+.crm-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem;
+  background: rgba(26, 26, 26, 0.8);
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.crm-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #888;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.crm-tab:hover {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+}
+
+.crm-tab.active {
+  background: rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+}
+
+.tab-icon {
+  font-size: 1.1rem;
+}
+
+.crm-tab-content {
+  min-height: 600px;
+}
+
+.crm-header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.details-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+.score-badge {
+  padding: 0.2rem 0.5rem;
+  background: rgba(0, 204, 255, 0.2);
+  color: #00ccff;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* ============================================
+   EMAIL TAB
+   ============================================ */
+
+.email-tab, .calendar-tab, .deals-tab, .tasks-tab {
+  animation: fadeIn 0.3s;
+}
+
+.email-header, .calendar-header, .deals-header, .tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.email-header h2, .calendar-header h2, .deals-header h2, .tasks-header h2 {
+  font-size: 1.5rem;
+  color: #00ff88;
+}
+
+.email-layout {
+  display: grid;
+  grid-template-columns: 200px 350px 1fr;
+  gap: 1.5rem;
+  height: calc(100vh - 300px);
+  min-height: 500px;
+}
+
+.email-sidebar {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.folder-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #aaa;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.folder-btn:hover {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+}
+
+.folder-btn.active {
+  background: rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+}
+
+.unread-badge {
+  margin-left: auto;
+  padding: 0.2rem 0.5rem;
+  background: #ff6b6b;
+  color: white;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.email-list {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  overflow-y: auto;
+}
+
+.email-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.email-item:hover {
+  background: rgba(0, 255, 136, 0.05);
+}
+
+.email-item.selected {
+  background: rgba(0, 255, 136, 0.1);
+  border-left: 3px solid #00ff88;
+}
+
+.email-item.unread {
+  background: rgba(0, 204, 255, 0.05);
+}
+
+.email-item.unread .email-sender,
+.email-item.unread .email-subject {
+  font-weight: 700;
+  color: #e0e0e0;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  opacity: 0.5;
+  transition: all 0.2s;
+}
+
+.star-btn:hover, .star-btn.starred {
+  opacity: 1;
+}
+
+.email-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.email-item-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.email-sender {
+  color: #aaa;
+  font-size: 0.85rem;
+}
+
+.email-date {
+  color: #666;
+  font-size: 0.75rem;
+}
+
+.email-subject {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email-preview {
+  color: #666;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email-tracking {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tracking-badge {
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.tracking-badge.opened {
+  background: rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+}
+
+.tracking-badge.clicked {
+  background: rgba(0, 204, 255, 0.2);
+  color: #00ccff;
+}
+
+.tracking-badge.replied {
+  background: rgba(255, 200, 0, 0.2);
+  color: #ffc800;
+}
+
+.email-detail {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.email-detail-header h3 {
+  color: #e0e0e0;
+  margin-bottom: 0.5rem;
+}
+
+.email-meta {
+  display: flex;
+  gap: 2rem;
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #333;
+}
+
+.tracking-info {
+  background: rgba(0, 255, 136, 0.05);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tracking-info h4 {
+  color: #00ff88;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.tracking-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.tracking-stats .stat {
+  text-align: center;
+}
+
+.tracking-stats .stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+.tracking-stats .stat-value.positive {
+  color: #00ff88;
+}
+
+.tracking-stats .stat-label {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.email-body {
+  padding: 1rem 0;
+  color: #e0e0e0;
+  line-height: 1.6;
+}
+
+.email-body pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+
+.email-actions {
+  padding-top: 1rem;
+  border-top: 1px solid #333;
+}
+
+.email-composer {
+  max-width: 600px;
+  width: 90%;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #00ff88;
+}
+
+/* ============================================
+   CALENDAR TAB
+   ============================================ */
+
+.calendar-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.view-toggle {
+  display: flex;
+  background: rgba(42, 42, 42, 0.8);
+  border-radius: 8px;
+  padding: 0.25rem;
+}
+
+.view-toggle button {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.view-toggle button:hover {
+  color: #00ff88;
+}
+
+.view-toggle button.active {
+  background: rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+}
+
+.calendar-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  gap: 1.5rem;
+  min-height: 500px;
+}
+
+.calendar-sidebar {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.calendar-sidebar h3 {
+  color: #00ff88;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.today-section, .upcoming-section {
+  margin-bottom: 2rem;
+}
+
+.mini-event {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: rgba(42, 42, 42, 0.5);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mini-event:hover {
+  background: rgba(0, 255, 136, 0.1);
+}
+
+.mini-event .event-time, .mini-event .event-date {
+  font-size: 0.75rem;
+  color: #00ff88;
+}
+
+.mini-event .event-title {
+  font-size: 0.85rem;
+  color: #e0e0e0;
+}
+
+.mini-event .event-contact {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.no-events {
+  color: #666;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.calendar-main {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.month-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.month-navigation button {
+  background: transparent;
+  border: 1px solid #333;
+  color: #00ff88;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.month-navigation button:hover {
+  background: rgba(0, 255, 136, 0.1);
+}
+
+.month-navigation h3 {
+  color: #e0e0e0;
+  font-size: 1.25rem;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-header-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.day-header {
+  text-align: center;
+  padding: 0.5rem;
+  color: #888;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.calendar-day {
+  min-height: 80px;
+  padding: 0.5rem;
+  background: rgba(42, 42, 42, 0.3);
+  border: 1px solid #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.calendar-day:hover:not(.empty) {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.05);
+}
+
+.calendar-day.empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.calendar-day.today {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+}
+
+.day-number {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  margin-bottom: 0.25rem;
+}
+
+.calendar-day.today .day-number {
+  color: #00ff88;
+}
+
+.day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.day-event {
+  padding: 0.2rem 0.4rem;
+  background: rgba(0, 255, 136, 0.2);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  color: #00ff88;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.day-event.event-call {
+  background: rgba(0, 204, 255, 0.2);
+  color: #00ccff;
+}
+
+.day-event.event-task {
+  background: rgba(255, 200, 0, 0.2);
+  color: #ffc800;
+}
+
+.more-events {
+  font-size: 0.7rem;
+  color: #888;
+}
+
+.event-detail-panel {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #333;
+}
+
+.panel-header h3 {
+  color: #e0e0e0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #ff6b6b;
+}
+
+.detail-row {
+  margin-bottom: 1rem;
+}
+
+.detail-row .label {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.detail-row .value {
+  color: #e0e0e0;
+}
+
+.detail-row .value.link {
+  color: #00ccff;
+  text-decoration: none;
+}
+
+.panel-actions {
+  padding-top: 1rem;
+  border-top: 1px solid #333;
+}
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.event-list-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(42, 42, 42, 0.5);
+  border: 1px solid #333;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.event-list-item:hover {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.05);
+}
+
+.event-list-item.selected {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+}
+
+.event-type-icon {
+  font-size: 1.5rem;
+}
+
+.event-list-content {
+  flex: 1;
+}
+
+.event-list-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.event-list-header .event-title {
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+.event-status {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.event-status.status-scheduled {
+  background: rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+}
+
+.event-list-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* ============================================
+   DEALS TAB
+   ============================================ */
+
+.deals-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.deals-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  flex: 1;
+  padding: 1rem;
+  background: rgba(42, 42, 42, 0.5);
+  border: 1px solid #333;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.stat-card .stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+.stat-card .stat-label {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.stat-card.warning .stat-value {
+  color: #ff6b6b;
+}
+
+.stat-card.info .stat-value {
+  color: #00ccff;
+}
+
+.stat-card.success .stat-value {
+  color: #00ff88;
+}
+
+.deals-board {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.stage-column {
+  flex: 0 0 280px;
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1rem;
+  max-height: calc(100vh - 350px);
+  overflow-y: auto;
+}
+
+.stage-header {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid;
+}
+
+.stage-header h3 {
+  color: #e0e0e0;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.stage-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.stage-deals {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.deal-card {
+  padding: 1rem;
+  background: rgba(42, 42, 42, 0.5);
+  border: 1px solid #333;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deal-card:hover {
+  border-color: #00ff88;
+  transform: translateY(-2px);
+}
+
+.deal-card.dragging {
+  opacity: 0.5;
+}
+
+.deal-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.deal-title {
+  color: #e0e0e0;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.deal-priority {
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #0a0a0a;
+  text-transform: uppercase;
+}
+
+.deal-card-body {
+  margin-bottom: 0.75rem;
+}
+
+.deal-contact {
+  display: block;
+  color: #aaa;
+  font-size: 0.85rem;
+}
+
+.deal-company {
+  display: block;
+  color: #666;
+  font-size: 0.75rem;
+}
+
+.deal-card-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.deal-value {
+  color: #00ff88;
+  font-weight: 600;
+}
+
+.deal-probability {
+  color: #888;
+}
+
+.deals-list {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.deals-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.deals-table th,
+.deals-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.deals-table th {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.deals-table tr:hover {
+  background: rgba(0, 255, 136, 0.05);
+  cursor: pointer;
+}
+
+.stage-badge, .priority-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #0a0a0a;
+}
+
+.deal-detail {
+  max-width: 600px;
+  width: 90%;
+}
+
+.deal-detail-content {
+  padding: 1rem 0;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-item label {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.detail-item p {
+  color: #e0e0e0;
+}
+
+.deal-value-large {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #00ff88 !important;
+}
+
+.detail-description {
+  padding: 1rem;
+  background: rgba(42, 42, 42, 0.5);
+  border-radius: 8px;
+}
+
+.detail-description label {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #333;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #00ff88 0%, #00cc6f 100%);
+  color: #0a0a0a;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ff6b6b 0%, #cc5555 100%);
+  color: white;
+}
+
+/* ============================================
+   TASKS TAB
+   ============================================ */
+
+.tasks-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tasks-filter {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tasks-filter button {
+  padding: 0.5rem 1.25rem;
+  background: rgba(42, 42, 42, 0.8);
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tasks-filter button:hover {
+  border-color: #00ff88;
+  color: #00ff88;
+}
+
+.tasks-filter button.active {
+  background: rgba(0, 255, 136, 0.2);
+  border-color: #00ff88;
+  color: #00ff88;
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.task-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(42, 42, 42, 0.5);
+  border: 1px solid #333;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.task-item:hover {
+  border-color: #00ff88;
+}
+
+.task-item.completed {
+  opacity: 0.6;
+}
+
+.task-item.completed .task-title {
+  text-decoration: line-through;
+}
+
+.task-item.overdue {
+  border-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.task-checkbox {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #333;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00ff88;
+  font-weight: 700;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.task-checkbox:hover {
+  border-color: #00ff88;
+}
+
+.task-checkbox.checked {
+  background: #00ff88;
+  border-color: #00ff88;
+  color: #0a0a0a;
+}
+
+.task-type-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.task-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.task-title {
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+.task-priority {
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+
+.task-description {
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.task-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.task-due {
+  color: #888;
+}
+
+.task-due.overdue {
+  color: #ff6b6b;
+}
+
+.task-due.today {
+  color: #ffc800;
+}
+
+.task-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  font-size: 1rem;
+  transition: opacity 0.2s;
+}
+
+.task-delete:hover {
+  opacity: 1;
+}
+
+/* ============================================
+   SHARED STYLES
+   ============================================ */
+
+.loading-state, .empty-state, .no-selection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #666;
+  font-size: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 1200px) {
+  .email-layout {
+    grid-template-columns: 180px 1fr;
+  }
+
+  .email-detail {
+    display: none;
+  }
+
+  .calendar-layout {
+    grid-template-columns: 200px 1fr;
+  }
+
+  .event-detail-panel {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .crm-tabs {
+    flex-wrap: wrap;
+  }
+
+  .crm-tab {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .tab-label {
+    display: none;
+  }
+
+  .email-layout, .calendar-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .email-sidebar, .calendar-sidebar {
+    display: none;
+  }
+
+  .deals-board {
+    flex-direction: column;
+  }
+
+  .stage-column {
+    flex: 1 1 auto;
+  }
+
+  .deals-stats, .tasks-stats {
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    flex: 1 1 45%;
+  }
+
+  .detail-grid, .form-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -242,3 +242,116 @@ export const validatePagination = [
     .isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
   validate
 ];
+
+/**
+ * Content Archive Item Validation Rules
+ */
+export const validateArchiveItem = [
+  body('title')
+    .trim()
+    .notEmpty().withMessage('Titel ist erforderlich')
+    .isLength({ min: 1, max: 200 }).withMessage('Titel darf maximal 200 Zeichen haben'),
+  body('element_type')
+    .notEmpty().withMessage('Element-Typ ist erforderlich')
+    .isIn(['hook', 'caption', 'text', 'voiceover', 'script', 'transitions', 'animations', 'stickers', 'videos', 'music', 'custom'])
+    .withMessage('Ungültiger Element-Typ'),
+  body('content')
+    .optional()
+    .trim()
+    .isLength({ max: 50000 }).withMessage('Inhalt darf maximal 50000 Zeichen haben'),
+  body('platform')
+    .optional()
+    .isIn(['youtube', 'instagram', 'tiktok', 'twitter', 'linkedin', 'facebook', 'blog', 'all', ''])
+    .withMessage('Ungültige Plattform'),
+  body('tags')
+    .optional()
+    .trim()
+    .isLength({ max: 500 }).withMessage('Tags dürfen maximal 500 Zeichen haben'),
+  body('category')
+    .optional()
+    .trim()
+    .isLength({ max: 100 }).withMessage('Kategorie darf maximal 100 Zeichen haben'),
+  validate
+];
+
+/**
+ * AI Chat Validation Rules
+ */
+export const validateAIChat = [
+  body('message')
+    .trim()
+    .notEmpty().withMessage('Nachricht ist erforderlich')
+    .isLength({ min: 1, max: 10000 }).withMessage('Nachricht darf maximal 10000 Zeichen haben'),
+  body('provider')
+    .optional()
+    .isIn(['gemini', 'ollama', 'lmstudio']).withMessage('Ungültiger Provider'),
+  body('conversationId')
+    .optional()
+    .custom(isValidUUID).withMessage('Ungültige Konversations-ID'),
+  body('model')
+    .optional()
+    .trim()
+    .isLength({ max: 100 }).withMessage('Modellname darf maximal 100 Zeichen haben'),
+  validate
+];
+
+/**
+ * Content Idea Validation Rules
+ */
+export const validateContentIdea = [
+  body('title')
+    .trim()
+    .notEmpty().withMessage('Titel ist erforderlich')
+    .isLength({ min: 1, max: 200 }).withMessage('Titel darf maximal 200 Zeichen haben'),
+  body('description')
+    .optional()
+    .trim()
+    .isLength({ max: 10000 }).withMessage('Beschreibung darf maximal 10000 Zeichen haben'),
+  body('platform')
+    .optional()
+    .isIn(['youtube', 'instagram', 'tiktok', 'twitter', 'linkedin', 'facebook', 'blog', 'other', ''])
+    .withMessage('Ungültige Plattform'),
+  body('status')
+    .optional()
+    .isIn(['idea', 'planned', 'in_progress', 'review', 'scheduled', 'published', 'archived'])
+    .withMessage('Ungültiger Status'),
+  body('priority')
+    .optional()
+    .isInt({ min: 0, max: 5 }).withMessage('Priorität muss zwischen 0 und 5 liegen'),
+  body('category')
+    .optional()
+    .trim()
+    .isLength({ max: 100 }).withMessage('Kategorie darf maximal 100 Zeichen haben'),
+  validate
+];
+
+/**
+ * Job Application Validation Rules
+ */
+export const validateJobApplication = [
+  body('company')
+    .trim()
+    .notEmpty().withMessage('Firma ist erforderlich')
+    .isLength({ min: 1, max: 100 }).withMessage('Firma darf maximal 100 Zeichen haben'),
+  body('position')
+    .trim()
+    .notEmpty().withMessage('Position ist erforderlich')
+    .isLength({ min: 1, max: 200 }).withMessage('Position darf maximal 200 Zeichen haben'),
+  body('status')
+    .optional()
+    .isIn(['researching', 'applied', 'interview', 'offer', 'rejected', 'accepted', 'declined'])
+    .withMessage('Ungültiger Status'),
+  body('url')
+    .optional()
+    .trim()
+    .isURL().withMessage('Ungültige URL'),
+  body('salary_range')
+    .optional()
+    .trim()
+    .isLength({ max: 50 }).withMessage('Gehaltsangabe darf maximal 50 Zeichen haben'),
+  body('notes')
+    .optional()
+    .trim()
+    .isLength({ max: 5000 }).withMessage('Notizen dürfen maximal 5000 Zeichen haben'),
+  validate
+];

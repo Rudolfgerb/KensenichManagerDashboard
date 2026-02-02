@@ -140,7 +140,7 @@ export default function FileManager() {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('/api/files/upload', formData, {
+      await axios.post('/api/files/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
@@ -159,7 +159,7 @@ export default function FileManager() {
     if (!urlInput.trim()) return;
     setIsProcessing(true);
     try {
-      const response = await axios.post('/api/ai/process-content', {
+      await axios.post('/api/ai/process-content', {
         content: urlInput,
         type: 'url'
       });
@@ -207,11 +207,16 @@ export default function FileManager() {
     }
   };
 
-  const transcribeAudio = async (audioBlob: Blob) => {
+  const transcribeAudio = async (_audioBlob: Blob) => {
     setIsProcessing(true);
     try {
       // Use Web Speech API for transcription
-      const recognition = new (window as any).webkitSpeechRecognition();
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      if (!SpeechRecognition) {
+        alert('Speech Recognition wird von diesem Browser nicht unterstützt');
+        return;
+      }
+      const recognition = new SpeechRecognition();
       recognition.lang = 'de-DE';
       recognition.continuous = false;
 
@@ -226,12 +231,12 @@ export default function FileManager() {
 
         if (response.data.action === 'create_task') {
           await axios.post('/api/tasks', response.data.task);
-          alert('✅ Aufgabe aus Voice Memo erstellt!');
+          alert('Aufgabe aus Voice Memo erstellt!');
         } else if (response.data.action === 'create_contact') {
           await axios.post('/api/crm/contacts', response.data.contact);
-          alert('✅ Kontakt aus Voice Memo erstellt!');
+          alert('Kontakt aus Voice Memo erstellt!');
         } else if (response.data.action === 'save_file') {
-          alert('✅ Voice Memo als Datei gespeichert!');
+          alert('Voice Memo als Datei gespeichert!');
         }
 
         handleCloseUploadModal();

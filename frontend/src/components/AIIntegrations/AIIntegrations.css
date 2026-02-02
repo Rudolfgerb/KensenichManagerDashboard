@@ -509,6 +509,129 @@
   }
 }
 
+/* ==================== WEITERE SECTION ==================== */
+
+.weitere-section {
+  margin-top: 3rem;
+  border-top: 2px solid var(--dark-border);
+  padding-top: 2rem;
+}
+
+.weitere-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+  border: 2px solid var(--dark-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #999;
+}
+
+.weitere-toggle:hover {
+  border-color: rgba(0, 255, 136, 0.5);
+  background: rgba(0, 255, 136, 0.05);
+  color: #fff;
+}
+
+.weitere-toggle.open {
+  border-color: var(--neon-green);
+  background: rgba(0, 255, 136, 0.1);
+  color: #fff;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.weitere-icon {
+  font-size: 1.5rem;
+}
+
+.weitere-title {
+  flex: 1;
+  text-align: left;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.weitere-count {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.weitere-toggle.open .weitere-count {
+  background: var(--neon-green);
+  color: #000;
+}
+
+.weitere-arrow {
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+.weitere-toggle.open .weitere-arrow {
+  color: var(--neon-green);
+}
+
+.weitere-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--dark-border);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  animation: slideDown 0.3s ease;
+}
+
+.weitere-card {
+  opacity: 0.85;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.weitere-card:hover {
+  opacity: 1;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Local AI Cards - Special Styling */
+.integration-card[data-category="local-ai"] {
+  border-color: #ff6b35;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 107, 53, 0.02));
+}
+
+.integration-card[data-category="local-ai"]:hover {
+  box-shadow: 0 10px 40px rgba(255, 107, 53, 0.3);
+}
+
+/* Automation Cards - Special Styling */
+.integration-card[data-category="automation"] {
+  border-color: #00ccff;
+  background: linear-gradient(135deg, rgba(0, 204, 255, 0.1), rgba(0, 204, 255, 0.02));
+}
+
+.integration-card[data-category="automation"]:hover {
+  box-shadow: 0 10px 40px rgba(0, 204, 255, 0.3);
+}
+
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */

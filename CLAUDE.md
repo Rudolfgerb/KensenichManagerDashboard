@@ -1,871 +1,677 @@
-# KensenichManager - Vollständige Projekt-Dokumentation
+# KensenichManager PRO - Vollständiges Benutzerhandbuch & PRD
 
 > **AI-gestützter persönlicher Business-Assistent für Produktivität, Projektmanagement und Zielerreichung**
 
-**Formerly known as:** BratanDrillManager
+**Version:** 2.0.0
+**Stand:** Januar 2026
 
 ---
 
-## 📋 Inhaltsverzeichnis
+## Inhaltsverzeichnis
 
-1. [Projekt-Übersicht](#projekt-übersicht)
-2. [Installation & Setup](#installation--setup)
-3. [Architektur](#architektur)
-4. [Features & Module](#features--module)
-5. [API-Dokumentation](#api-dokumentation)
-6. [Datenbank-Schema](#datenbank-schema)
-7. [Frontend-Komponenten](#frontend-komponenten)
-8. [AI-Integration](#ai-integration)
-9. [Entwicklung](#entwicklung)
-10. [Deployment](#deployment)
-11. [Roadmap](#roadmap)
+1. [Produkt-Vision](#1-produkt-vision)
+2. [Systemarchitektur](#2-systemarchitektur)
+3. [Installation & Konfiguration](#3-installation--konfiguration)
+4. [Module & Features](#4-module--features)
+5. [AI & Integrations Hub](#5-ai--integrations-hub)
+6. [API-Referenz](#6-api-referenz)
+7. [Datenbank-Schema](#7-datenbank-schema)
+8. [Frontend-Komponenten](#8-frontend-komponenten)
+9. [Entwickler-Guide](#9-entwickler-guide)
 
 ---
 
-## 📖 Projekt-Übersicht
+## 1. Produkt-Vision
 
-### Vision
-KensenichManager ist ein intelligenter persönlicher Assistent, der als zentrales Hub für:
-- **Produktivität** (Pomodoro Timer, Task Management)
-- **Business Management** (CRM, Kommunikation, Sales Pipeline)
-- **Projekt-Management** (Multi-Projekt Branding Board mit PRDs & Assets)
-- **Content Creation** (Content Plan mit Element-Tracking)
-- **Analytics** (KPIs von Google Analytics, Social Media, Email)
-- **Karriere** (Job Search Tracking)
-- **Ziele** (Goal Setting & Tracking)
-- **Entwicklung** (Terminal, File Management)
+### 1.1 Übersicht
 
-fungiert.
+KensenichManager ist ein intelligenter persönlicher Business-Assistent, der folgende Kernbereiche abdeckt:
 
-### Technologie
-- **Frontend**: React 18 + TypeScript + Vite
-- **Backend**: Node.js + Express
-- **Datenbank**: SQLite
-- **AI**: Google Gemini Pro ODER Ollama (lokal)
-- **Styling**: Custom CSS mit Neon-Green Theme
-- **Speech**: Web Speech API
-- **Analytics**: Integration-ready für Google Analytics, Social Media APIs
+| Bereich | Funktionen |
+|---------|------------|
+| **Produktivität** | Pomodoro Timer, Task Management, Daily Habits |
+| **Business** | CRM, Sales Pipeline, Kommunikation |
+| **Projekte** | Multi-Projekt Board, PRDs, Assets, Milestones |
+| **Content** | Content Plan, Element-Tracking, Archive |
+| **Analytics** | Social Media Metrics, Performance Dashboard |
+| **AI** | Lokale LLMs (Ollama, LM Studio), Agent-System |
+| **Automation** | n8n Integration, Workflow Builder, Agent Hierarchie |
 
-### Zielgruppe
+### 1.2 Zielgruppe
+
 - Gründer & Entrepreneurs
 - Product Manager & Scrum Master
 - Freelancer & Remote Worker
+- Content Creator & Influencer
 - Entwickler mit Business-Ambitionen
 
 ---
 
-## 🚀 Installation & Setup
+## 2. Systemarchitektur
 
-### Voraussetzungen
-```bash
-- Node.js >= 18.x
-- npm >= 9.x
-- Google Gemini API Key
+### 2.1 Tech Stack
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        FRONTEND                              │
+│  React 18 + TypeScript + Vite + Custom CSS (Neon Theme)     │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                        BACKEND                               │
+│  Node.js + Express.js + SQLite                              │
+│  Endpoints: REST API auf Port 3001                          │
+└─────────────────────────────────────────────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│   AI Provider │    │   Ollama      │    │   LM Studio   │
+│ Google Gemini │    │ localhost:    │    │ localhost:    │
+│               │    │ 11434         │    │ 1234          │
+└───────────────┘    └───────────────┘    └───────────────┘
 ```
 
-### Installation
+### 2.2 Ordnerstruktur
 
-1. **Repository klonen / Ordner öffnen**
-```bash
-cd /home/pi2/Desktop/bratanasisstent
+```
+kensenichmanagerPRO/
+├── backend/                       # Node.js Express Server
+│   ├── src/
+│   │   ├── server.js             # Haupt-Server Entry Point
+│   │   ├── db.js                 # SQLite Datenbank-Setup
+│   │   ├── db-indexes.js         # Performance-Indexes
+│   │   ├── middleware/           # Error Handler, Logger
+│   │   ├── routes/               # API Endpoints
+│   │   │   ├── ai.js             # AI Chat & Agent API
+│   │   │   ├── agents.js         # Agent Management
+│   │   │   ├── automation.js     # Automation Rules
+│   │   │   ├── content.js        # Content Plan
+│   │   │   ├── crm.js            # CRM System
+│   │   │   ├── dashboard.js      # Dashboard Stats
+│   │   │   ├── goals.js          # Ziel-Tracking
+│   │   │   ├── integrations.js   # External Services
+│   │   │   ├── jobs.js           # Job Applications
+│   │   │   ├── mutuus.js         # Mutuus Launch
+│   │   │   ├── pages.js          # Workspace Pages
+│   │   │   ├── projects.js       # Branding Board
+│   │   │   ├── sales-pipeline.js # Partner Pipeline
+│   │   │   ├── sessions.js       # Work Sessions
+│   │   │   ├── social.js         # Social Media Profiles
+│   │   │   ├── sops.js           # SOPs
+│   │   │   ├── tasks.js          # Task Management
+│   │   │   └── terminal.js       # Terminal API
+│   │   ├── services/             # Business Logic
+│   │   │   ├── agentContext.js   # AI Agent Context
+│   │   │   └── agentTools.js     # Agent Tool Definitions
+│   │   └── utils/                # Helpers
+│   ├── data/                     # SQLite Database
+│   │   └── bratandrillmanager.db
+│   ├── uploads/                  # File Uploads
+│   └── package.json
+│
+├── frontend/                      # React TypeScript App
+│   ├── src/
+│   │   ├── main.tsx              # App Entry
+│   │   ├── App.tsx               # Main Router
+│   │   ├── App.css               # Global Styles
+│   │   ├── types/                # TypeScript Interfaces
+│   │   │   └── index.ts
+│   │   ├── services/             # API Client
+│   │   │   └── api.ts
+│   │   └── components/           # React Komponenten
+│   │       ├── Dashboard/        # Haupt-Dashboard
+│   │       ├── AIAssistant/      # Bratan AI Chatbot
+│   │       ├── IntegrationsHub/  # AI & Integrations Seite
+│   │       ├── AIIntegrations/   # Integration Cards
+│   │       ├── AnalyticsDashboard/
+│   │       ├── ContentPlan/      # Content Management
+│   │       ├── BrandingBoard/    # Multi-Projekt Board
+│   │       ├── CRM/              # Kontaktverwaltung
+│   │       ├── GoalTracker/      # Ziele
+│   │       ├── FileManager/      # Dateien
+│   │       └── Terminal/         # CLI Interface
+│   └── package.json
+│
+├── CLAUDE.md                      # Diese Dokumentation
+└── start.sh                       # Start Script
 ```
 
-2. **Backend Setup**
+### 2.3 Datenfluss
+
+```
+User Input → Frontend Component → Axios API Call → Express Route
+     ↓              ↓                    ↓              ↓
+   Event        State Update         HTTP/JSON      SQLite DB
+     ↑              ↑                    ↑              ↑
+   Render     Component Re-render     Response     Query Result
+```
+
+---
+
+## 3. Installation & Konfiguration
+
+### 3.1 Voraussetzungen
+
+- **Node.js** >= 18.x
+- **npm** >= 9.x
+- **Optional:** Ollama (für lokale LLMs)
+- **Optional:** LM Studio (GUI für lokale LLMs)
+- **Optional:** n8n (für Automations)
+
+### 3.2 Installation
+
 ```bash
+# 1. Repository klonen
+git clone <repository-url>
+cd kensenichmanagerPRO
+
+# 2. Backend Setup
 cd backend
 npm install
-
-# .env Datei erstellen
 cp .env.example .env
-# Gemini API Key eintragen:
-# GEMINI_API_KEY=AIzaSyDnzN980k4vBEFmjOWiwHCMV61lSaVLgg4
-```
+# Edit .env with your API keys
 
-3. **Frontend Setup**
-```bash
+# 3. Frontend Setup
 cd ../frontend
 npm install
 ```
 
-### Start
+### 3.3 Umgebungsvariablen (backend/.env)
 
-**Methode 1: Start-Script**
 ```bash
-chmod +x start.sh
-./start.sh
+# Server
+PORT=3001
+NODE_ENV=development
+
+# AI Provider (gemini oder ollama)
+AI_PROVIDER=gemini
+
+# Google Gemini
+GEMINI_API_KEY=your_api_key_here
+GEMINI_MODEL=gemini-1.5-flash
+
+# Ollama (lokal)
+OLLAMA_API_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.2
+
+# Optional: Google OAuth
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 ```
 
-**Methode 2: Manual**
+### 3.4 Starten
+
 ```bash
+# Methode 1: Start Script
+./start.sh
+
+# Methode 2: Manual
 # Terminal 1 - Backend
-cd backend
-npm run dev
+cd backend && npm run dev
 
 # Terminal 2 - Frontend
-cd frontend
-npm run dev
+cd frontend && npm run dev
 ```
 
-### URLs
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:3001
-- **Health Check**: http://localhost:3001/api/health
+### 3.5 URLs
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:3001 |
+| Health Check | http://localhost:3001/api/health |
+| Ollama | http://localhost:11434 |
+| LM Studio | http://localhost:1234 |
+| n8n | http://localhost:5678 |
 
 ---
 
-## 🏗️ Architektur
+## 4. Module & Features
 
-### Ordnerstruktur
+### 4.1 Dashboard
+
+**Route:** `/`
+**Komponente:** `Dashboard.tsx`
+
+Das Dashboard zeigt eine Übersicht aller wichtigen Metriken:
+
+- **Statistik-Cards:** Sessions, Zeit, Fortschritt
+- **Quick Actions:** Pomodoro starten, Neue Aufgabe
+- **Letzte Sessions:** Timeline der Arbeitssitzungen
+- **Module-Übersicht:** Schnellzugriff auf alle Features
+
+### 4.2 Pomodoro Timer
+
+**Komponente:** `TaskTimer.tsx`
+
+Flow:
+1. "Start" Button klicken
+2. Task auswählen (oder neuen erstellen)
+3. 30-Minuten Timer läuft
+4. "Fertig" → Dokumentation eingeben
+5. Session wird in DB gespeichert
+
+### 4.3 Content Plan
+
+**Route:** `/content`
+**Komponenten:** `ContentPlan.tsx`, `ContentIdeaForm.tsx`, `ContentDetail.tsx`
+
+**Tabs:**
+| Tab | Funktion |
+|-----|----------|
+| **Content Ideas** | Grid/List/Kanban View aller Content-Ideen |
+| **Content Archive** | Wiederverwendbare Assets (Hooks, Captions, etc.) |
+| **Social Media** | Verbundene Profile & Statistiken |
+| **Upload Calendar** | Geplante Veröffentlichungen |
+| **Performance** | Analytics nach Plattform |
+
+**Element-Types für Content:**
+- Hook, Caption, Text, Voiceover, Script
+- Transitions, Animations, Stickers
+- Videos, Music, Custom
+
+**Plattformen:**
+- YouTube, Instagram, TikTok
+- Twitter, LinkedIn, Facebook, Blog
+
+### 4.4 Branding Board
+
+**Route:** `/branding`
+**Komponente:** `BrandingBoard.tsx`
+
+Multi-Projekt-Management mit:
+- **Projekte:** Name, Status, Color, Icon
+- **Assets:** Logos, Farben, Typography, Icons
+- **Dokumente:** PRD, Pitch Deck, Business Plan, Roadmap
+- **Milestones:** Target Dates, Progress, Dependencies
+
+### 4.5 CRM System
+
+**Route:** `/crm`
+**Backend:** `routes/crm.js`
+
+Features:
+- Kontaktverwaltung (Kunden, Partner, Leads)
+- Kommunikations-Log (Email, Call, Meeting)
+- Follow-up Reminders
+- Tagging System
+
+### 4.6 Goal Tracker
+
+**Route:** `/goals`
+**Backend:** `routes/goals.js`
+
+SMART Goals mit:
+- Kategorien: Business, Career, Personal, Health
+- Progress Tracking (0-100%)
+- Target Dates
+- Metrics & KPIs
+
+---
+
+## 5. AI & Integrations Hub
+
+**Route:** `/integrations`
+**Komponente:** `IntegrationsHub.tsx`
+
+Der Hub ist das zentrale Control Center für alle AI- und Drittanbieter-Integrationen.
+
+### 5.1 Tab-Übersicht
+
+| Tab | Zweck |
+|-----|-------|
+| **Integrations** | Alle verfügbaren Services verbinden |
+| **Analytics** | Aggregierte Metriken aller Plattformen |
+| **Ollama** | Lokale LLMs starten & verwalten |
+| **LM Studio** | GUI für lokale Modelle |
+| **Automations** | n8n Workflows & Agent Management |
+| **Social** | Social Media Profile verknüpfen |
+
+### 5.2 Ollama Tab
+
+**Funktionen:**
+- Server-Status prüfen (connected/offline)
+- Ollama per Knopfdruck starten
+- Installierte Modelle anzeigen
+- Modelle downloaden (llama3.2, mistral, codellama, etc.)
+- Aktives Modell wählen
+- Modelle löschen
+
+**Beliebte Modelle:**
+| Modell | Beschreibung | Größe |
+|--------|--------------|-------|
+| llama3.2 | Meta Llama 3.2 - Neuestes | 2.0 GB |
+| llama3.1 | Stabil & Schnell | 4.7 GB |
+| mistral | Effizient | 4.1 GB |
+| codellama | Programmierung | 3.8 GB |
+| phi3 | Microsoft Compact | 2.2 GB |
+| gemma2 | Google Multimodal | 5.4 GB |
+| qwen2.5 | Multilingual | 4.4 GB |
+| deepseek-coder | Code Expert | 6.7 GB |
+
+### 5.3 LM Studio Tab
+
+**Features:**
+- Verbindungsstatus
+- LM Studio per Knopfdruck öffnen
+- Geladene Modelle anzeigen
+- OpenAI-kompatible API (Port 1234)
+- GGUF Model Support
+
+### 5.4 Automations Tab
+
+**n8n Integration:**
+- Server-Status (Running/Stopped)
+- n8n per Knopfdruck starten
+- n8n im iframe eingebettet
+- Workflows ohne Fensterwechsel bearbeiten
+
+**Agent Hierarchie:**
 ```
-bratanasisstent/
-├── backend/                    # Node.js Express Server
-│   ├── src/
-│   │   ├── server.js          # Main Server Entry
-│   │   ├── db.js              # Database Setup & Schema
-│   │   └── routes/            # API Routes
-│   │       ├── tasks.js       # Task Management
-│   │       ├── sessions.js    # Work Sessions
-│   │       ├── ai.js          # AI Chat & Services
-│   │       ├── crm.js         # CRM System
-│   │       ├── goals.js       # Goal Tracking
-│   │       ├── terminal.js    # Terminal API
-│   │       ├── sops.js        # SOPs
-│   │       └── pages.js       # Workspace Pages
-│   ├── data/                  # SQLite Database
-│   └── package.json
-│
-├── frontend/                   # React TypeScript App
-│   ├── src/
-│   │   ├── main.tsx           # App Entry
-│   │   ├── App.tsx            # Main App Component
-│   │   ├── App.css            # Global Styles
-│   │   ├── types/             # TypeScript Types
-│   │   ├── services/          # API Services
-│   │   │   └── api.ts         # Axios API Client
-│   │   └── components/        # React Components
-│   │       ├── Dashboard/     # Main Dashboard
-│   │       ├── AIAssistant/   # Bratan AI Chatbot
-│   │       ├── TaskTimer/     # Pomodoro Timer
-│   │       ├── TaskDocumentation/
-│   │       ├── FileManager/   # File Browser
-│   │       ├── CRM/           # Customer Relations
-│   │       ├── GoalTracker/   # Goal Management
-│   │       ├── BrandingBoard/ # Assets & Templates
-│   │       └── Terminal/      # Terminal Interface
-│   ├── index.html
-│   └── package.json
-│
-├── shared/                     # Shared Code
-├── start.sh                    # Start Script
-├── README.md                   # Project README
-├── FEATURES.md                 # Feature List
-└── CLAUDE.md                   # Diese Datei
-```
-
-### Tech Stack Details
-
-#### Backend
-- **Framework**: Express.js 4.x
-- **Database**: SQLite3 (via sqlite3 package)
-- **AI**: @google/generative-ai (Gemini)
-- **Security**: CORS, Input Validation
-- **Dev**: Nodemon (Hot Reload)
-
-#### Frontend
-- **Framework**: React 18 + TypeScript
-- **Build Tool**: Vite 5.x
-- **Routing**: React Router DOM 6.x
-- **HTTP Client**: Axios
-- **State**: React Hooks (useState, useEffect)
-- **Styling**: Custom CSS (no framework)
-
----
-
-## ✨ Features & Module
-
-### 1. **Dashboard** ✅ Implementiert
-**Path**: `/`
-
-**Features**:
-- Statistik-Cards (Sessions, Zeit, Fortschritt)
-- Start-Button für 30-Min Pomodoro Sessions
-- Letzte Sessions Timeline
-- Schnellzugriff auf alle Module
-
-**Komponenten**:
-- `Dashboard.tsx` - Haupt-Dashboard
-- `Dashboard.css` - Futuristisches Styling
-
----
-
-### 2. **AI Assistent "Bratan"** ✅ Implementiert
-**Path**: Floating Widget (immer verfügbar)
-
-**Features**:
-- 🤖 Animierter Roboter-Avatar
-- 💬 Chat-Interface mit Google Gemini
-- 🎤 Spracheingabe (Web Speech API)
-- 🔊 Text-to-Speech Ausgabe
-- 💾 Persistente Chat-Historie
-- 🎯 Kontextbewusstes Coaching
-- ⚡ Auto-Begrüßung beim ersten Besuch
-
-**Verwendung**:
-```javascript
-// Chat-Beispiele
-"Bratan, was steht heute an?"
-"Zeig mir meine Mutuus Milestones"
-"Erstelle ein Meeting-Protokoll"
-"Wie viele Bewerbungen habe ich diese Woche?"
-```
-
-**API**:
-- `POST /api/ai/chat` - Chat mit Gemini
-- `POST /api/ai/summarize-session` - Session zusammenfassen
-- `POST /api/ai/analyze-productivity` - Produktivität analysieren
-- `POST /api/ai/generate-sop` - SOP generieren
-
----
-
-### 3. **Pomodoro Timer** ✅ Implementiert
-**Path**: Über Dashboard "Start" Button
-
-**Features**:
-- ⏱️ 30-Minuten Countdown
-- 📊 Visueller Circle Progress
-- 🎯 Task-Auswahl vor Session
-- 📝 Dokumentation nach Session
-- 💾 Auto-Speicherung in DB
-- 📈 Session-Statistiken
-
-**Flow**:
-1. "Start" klicken
-2. Task auswählen (oder neu erstellen)
-3. Timer läuft (30 Min)
-4. "Fertig" klicken
-5. Dokumentation eingeben
-6. Session wird gespeichert
-
-**API**:
-- `POST /api/sessions/start` - Session starten
-- `POST /api/sessions/:id/complete` - Session abschließen
-- `POST /api/sessions/:id/stop` - Session stoppen
-- `GET /api/sessions/current` - Aktuelle Session
-- `GET /api/sessions/stats` - Statistiken
-
----
-
-### 4. **Task Management** ✅ Implementiert
-**Path**: `/tasks` (geplant)
-
-**Features**:
-- ✅ Task CRUD (Create, Read, Update, Delete)
-- 🏷️ Kategorien & Tags
-- ⭐ Prioritäten (0-5)
-- 📅 Due Dates
-- 📊 Geschätzte Sessions
-- 🔄 Status Tracking (todo, in_progress, completed)
-
-**API**:
-- `GET /api/tasks` - Alle Tasks
-- `GET /api/tasks/pending` - Offene Tasks
-- `POST /api/tasks` - Task erstellen
-- `PUT /api/tasks/:id` - Task aktualisieren
-- `DELETE /api/tasks/:id` - Task löschen
-
----
-
-### 5. **CRM System** ⚙️ Backend fertig
-**Path**: `/crm` (Frontend TODO)
-
-**Features**:
-- 👥 Kontaktverwaltung (Kunden, Partner, Leads)
-- 📧 Kommunikations-Log (Email, Call, Meeting)
-- 📅 Follow-up Reminders
-- 🏷️ Tagging System
-- 📊 Kontakt-Historie
-- 🔔 Überfällige Follow-ups
-
-**Datenmodell**:
-```typescript
-interface Contact {
-  id: string;
-  name: string;
-  type: 'client' | 'partner' | 'lead';
-  email?: string;
-  phone?: string;
-  company?: string;
-  notes?: string;
-  last_contact?: Date;
-  next_followup?: Date;
-  tags?: string[];
-}
-
-interface Communication {
-  id: string;
-  contact_id: string;
-  type: 'email' | 'call' | 'meeting' | 'message';
-  subject?: string;
-  content?: string;
-  direction: 'incoming' | 'outgoing';
-  status: 'sent' | 'received' | 'scheduled';
-  sent_at?: Date;
-}
+👑 Master Agents
+    ├── Orchestrator (koordiniert alle anderen)
+    │
+⚙️ Worker Agents
+    ├── Content Writer (Social Media Content)
+    ├── Research Agent (Recherche)
+    │
+🎯 Specialist Agents
+    ├── Code Assistant (Programmierung)
+    └── SEO Expert (Suchmaschinenoptimierung)
 ```
 
-**API**:
-- `GET /api/crm/contacts` - Alle Kontakte
-- `GET /api/crm/contacts/:id` - Kontakt + Historie
-- `POST /api/crm/contacts` - Kontakt erstellen
-- `PUT /api/crm/contacts/:id` - Kontakt aktualisieren
-- `POST /api/crm/contacts/:id/communication` - Kommunikation loggen
-- `GET /api/crm/followups` - Überfällige Follow-ups
+**Agent-Verwaltung:**
+- Agents erstellen/bearbeiten/löschen
+- System Prompts definieren
+- Modell zuweisen
+- Hierarchie festlegen
+- Parent-Agent verknüpfen
+
+### 5.5 Social Media Tab
+
+**Profile verbinden:**
+- Instagram, YouTube, TikTok
+- Twitter/X, LinkedIn, Facebook
+
+**Metriken pro Profil:**
+- Followers, Posts, Engagement Rate
+- Live-Sync (OAuth kommt bald)
 
 ---
 
-### 6. **Goal Tracking** ⚙️ Backend fertig
-**Path**: `/goals` (Frontend TODO)
+## 6. API-Referenz
 
-**Features**:
-- 🎯 Ziel-Definition (SMART Goals)
-- 📈 Progress Tracking (0-100%)
-- 📅 Target Dates
-- 🏷️ Kategorien (business, career, personal, health)
-- 📊 Metrics & KPIs
-- ✅ Status (active, completed, paused, abandoned)
+### 6.1 Base URL
 
-**Datenmodell**:
-```typescript
-interface Goal {
-  id: string;
-  title: string;
-  description?: string;
-  category?: string;
-  target_date?: Date;
-  status: 'active' | 'completed' | 'paused' | 'abandoned';
-  progress: number; // 0-100
-  metrics?: string; // JSON
-}
-```
-
-**API**:
-- `GET /api/goals` - Alle Ziele
-- `GET /api/goals?status=active` - Aktive Ziele
-- `POST /api/goals` - Ziel erstellen
-- `PUT /api/goals/:id` - Ziel aktualisieren
-- `GET /api/goals/stats/overview` - Statistiken
-
----
-
-### 7. **File Manager** ✅ Implementiert (Frontend)
-**Path**: `/files` (geplant)
-
-**Features**:
-- 📁 Desktop-Dateien browsen
-- 🔍 Datei-Suche
-- 📊 Grid & List View
-- 📄 Datei-Vorschau
-- ⭐ Favoriten
-- 🏷️ Quick Links
-
-**Komponenten**:
-- `FileManager.tsx`
-- `FileManager.css`
-
----
-
-### 8. **Terminal** ⚙️ Backend fertig
-**Path**: `/terminal` (Frontend TODO)
-
-**Features**:
-- 💻 CLI Commands ausführen
-- 📁 Desktop-Zugriff
-- 🔐 Whitelist-basierte Security
-- 📜 Command History
-- 🤖 Claude CLI Integration
-- 🤖 Gemini CLI Integration
-
-**Erlaubte Commands**:
-- `ls`, `pwd`, `cat`, `echo`
-- `claude` (Claude CLI)
-- `gemini` (Gemini CLI)
-- `npm`, `node`, `git`
-
-**API**:
-- `POST /api/terminal/execute` - Command ausführen
-- `GET /api/terminal/files` - Dateien listen
-- `GET /api/terminal/files/read` - Datei lesen
-- `POST /api/terminal/files/write` - Datei schreiben
-- `GET /api/terminal/cwd` - Working Directory
-
-**Beispiele**:
-```bash
-# Via API
-POST /api/terminal/execute
-{
-  "command": "ls -la",
-  "cwd": "/home/pi2/Desktop"
-}
-
-# Response
-{
-  "success": true,
-  "stdout": "total 48\ndrwxr-xr-x ...",
-  "stderr": "",
-  "cwd": "/home/pi2/Desktop"
-}
-```
-
----
-
-### 9. **Branding Board** ✅ Implementiert
-**Path**: `/branding`
-
-**Features**:
-- 📁 **Multi-Projekt-Management** - Verwalte mehrere Projekte parallel
-- 🎨 **Branding Assets** - Logos, Farbpaletten, Typography, Icons per Projekt
-- 📄 **Projekt-Dokumente** - PRD, Pitch Deck, Business Plan, Roadmaps
-- 🎯 **Milestones** - Projekt-Milestones mit Progress-Tracking
-- 🔄 **Projekt-Switcher** - Schnell zwischen Projekten wechseln
-- 📊 **Projekt-Stats** - Übersicht über Assets, Docs und Milestones
-
-**Datenmodell**:
-```typescript
-interface Project {
-  id: string;
-  name: string;
-  description?: string;
-  status: 'active' | 'paused' | 'completed' | 'archived';
-  color?: string;
-  icon?: string;
-  start_date?: string;
-  target_launch_date?: string;
-  actual_launch_date?: string;
-  website_url?: string;
-  repository_url?: string;
-  notes?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-interface BrandingAsset {
-  id: string;
-  project_id: string;
-  asset_type: 'logo' | 'color_palette' | 'typography' | 'icon' |
-                'image' | 'video' | 'template' | 'other';
-  title: string;
-  description?: string;
-  file_url?: string;
-  version: string;
-  is_primary: number;
-}
-
-interface ProjectDocument {
-  id: string;
-  project_id: string;
-  document_type: 'prd' | 'pitch_deck' | 'business_plan' |
-                  'roadmap' | 'design_spec' | 'other';
-  title: string;
-  content?: string;
-  status: 'draft' | 'review' | 'approved' | 'published';
-  version: string;
-}
-
-interface ProjectMilestone {
-  id: string;
-  project_id: string;
-  title: string;
-  description?: string;
-  target_date?: string;
-  completed_date?: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'blocked';
-  progress: number;
-  priority: number;
-}
-```
-
-**API**:
-```javascript
-// Projects
-GET    /api/projects              - Alle Projekte
-GET    /api/projects/:id          - Einzelnes Projekt mit Details
-POST   /api/projects              - Projekt erstellen
-PUT    /api/projects/:id          - Projekt aktualisieren
-DELETE /api/projects/:id          - Projekt löschen
-GET    /api/projects/:id/stats    - Projekt-Statistiken
-
-// Assets
-GET    /api/projects/:id/assets                  - Alle Assets
-POST   /api/projects/:id/assets                  - Asset hinzufügen
-PUT    /api/projects/:pid/assets/:aid            - Asset aktualisieren
-DELETE /api/projects/:pid/assets/:aid            - Asset löschen
-
-// Documents
-GET    /api/projects/:id/documents               - Alle Dokumente
-POST   /api/projects/:id/documents               - Dokument erstellen
-PUT    /api/projects/:pid/documents/:did         - Dokument aktualisieren
-DELETE /api/projects/:pid/documents/:did         - Dokument löschen
-
-// Milestones
-GET    /api/projects/:id/milestones              - Alle Milestones
-POST   /api/projects/:id/milestones              - Milestone erstellen
-PUT    /api/projects/:pid/milestones/:mid        - Milestone aktualisieren
-DELETE /api/projects/:pid/milestones/:mid        - Milestone löschen
-```
-
-**Verwendung**:
-```javascript
-// Projekt erstellen
-POST /api/projects
-{
-  "name": "Mutuus App",
-  "description": "Mental Health & Productivity App",
-  "icon": "🚀",
-  "color": "#00ff88",
-  "status": "active",
-  "website_url": "https://mutuus.app"
-}
-
-// Asset hinzufügen
-POST /api/projects/{project_id}/assets
-{
-  "asset_type": "logo",
-  "title": "Primary Logo",
-  "description": "Main brand logo with tagline",
-  "file_url": "https://...",
-  "version": "2.0",
-  "is_primary": 1
-}
-
-// PRD erstellen
-POST /api/projects/{project_id}/documents
-{
-  "document_type": "prd",
-  "title": "Mutuus MVP Requirements",
-  "content": "## Features\n1. User Auth\n2. Dashboard...",
-  "status": "approved",
-  "version": "1.0"
-}
-```
-
-**Komponenten**:
-- `BrandingBoard.tsx` - Haupt-Komponente mit Projekt-Management
-- `BrandingBoard.css` - Futuristisches Styling
-- `types/index.ts` - TypeScript Interfaces
-
----
-
-### 10. **Job Search Tracker** 📋 Tabelle existiert
-**Path**: `/jobs` (TODO)
-
-**Datenmodell**:
-```typescript
-interface JobApplication {
-  id: string;
-  company: string;
-  position: string;
-  status: 'applied' | 'interview' | 'offer' | 'rejected';
-  applied_date?: Date;
-  interview_date?: Date;
-  notes?: string;
-  salary_range?: string;
-  job_url?: string;
-  contact_person?: string;
-}
-```
-
----
-
-### 11. **Mutuus Launch Manager** 📋 Tabelle existiert
-**Path**: `/mutuus` (TODO)
-
-**Datenmodell**:
-```typescript
-interface MutuusMilestone {
-  id: string;
-  title: string;
-  description?: string;
-  target_date?: Date;
-  status: 'pending' | 'in_progress' | 'completed' | 'blocked';
-  progress: number; // 0-100
-  dependencies?: string[]; // IDs
-}
-```
-
----
-
-## 📡 API-Dokumentation
-
-### Base URL
 ```
 http://localhost:3001/api
 ```
 
-### Authentication
-Aktuell: **Keine Authentication** (Personal Use Only)
-Geplant: JWT-basiert für Multi-User
+### 6.2 Endpoints Übersicht
 
-### Endpoints Overview
-
-#### Tasks
+#### AI & Chat
 ```
-GET    /tasks              - Alle Tasks
-GET    /tasks/pending      - Offene Tasks
-GET    /tasks/:id          - Einzelner Task
-POST   /tasks              - Task erstellen
-PUT    /tasks/:id          - Task aktualisieren
-DELETE /tasks/:id          - Task löschen
-```
-
-#### Sessions
-```
-GET    /sessions           - Alle Sessions
-GET    /sessions/stats     - Statistiken
-GET    /sessions/current   - Laufende Session
-POST   /sessions/start     - Session starten
-POST   /sessions/:id/complete - Session abschließen
-POST   /sessions/:id/stop  - Session stoppen
+POST   /ai/chat                    Chat mit AI
+POST   /ai/agent/chat              Agent mit Tool-Calling
+POST   /ai/summarize-session       Session zusammenfassen
+POST   /ai/analyze-productivity    Produktivität analysieren
+POST   /ai/generate-sop            SOP generieren
+GET    /ai/config                  AI Provider Config
+GET    /ai/test-ollama             Ollama Verbindungstest
+GET    /ai/conversations           Alle Konversationen
+GET    /ai/conversations/:id       Konversation mit Messages
+POST   /ai/conversations           Neue Konversation
+DELETE /ai/conversations/:id       Konversation löschen
+GET    /ai/facts                   User Facts (Memory)
+POST   /ai/facts                   Fact speichern
+GET    /ai/habits                  Daily Habits
+PUT    /ai/habits/:id              Habit aktualisieren
+GET    /ai/tools                   Verfügbare Agent Tools
 ```
 
-#### AI
+#### Agents
 ```
-POST   /ai/chat                  - Chat mit Gemini
-POST   /ai/summarize-session     - Session zusammenfassen
-POST   /ai/analyze-productivity  - Produktivität analysieren
-POST   /ai/generate-sop          - SOP generieren
+GET    /agents                     Alle Agents
+GET    /agents/:id                 Einzelner Agent
+POST   /agents                     Agent erstellen
+PUT    /agents/:id                 Agent aktualisieren
+DELETE /agents/:id                 Agent löschen
+GET    /agents/hierarchy/tree      Hierarchie-Baum
+```
+
+#### Social Profiles
+```
+GET    /social/profiles            Alle Profile
+GET    /social/profiles/:id        Einzelnes Profil
+POST   /social/profiles/:id/connect    Profil verbinden
+POST   /social/profiles/:id/disconnect Profil trennen
+PUT    /social/profiles/:id/metrics    Metriken aktualisieren
+GET    /social/profiles/:id/metrics    Metrik-Historie
+GET    /social/analytics           Aggregierte Analytics
+POST   /social/profiles/:id/sync   Profil synchronisieren
+```
+
+#### Integrations
+```
+GET    /integrations               Alle Integrationen
+POST   /integrations/connect       Integration verbinden
+POST   /integrations/disconnect    Integration trennen
+GET    /integrations/analytics     Aggregierte Analytics
+```
+
+#### Content
+```
+GET    /content/ideas              Alle Content-Ideen
+GET    /content/ideas/:id          Einzelne Idee mit Elementen
+POST   /content/ideas              Neue Idee erstellen
+PUT    /content/ideas/:id          Idee aktualisieren
+DELETE /content/ideas/:id          Idee löschen
+GET    /content/ideas/stats/overview   Statistiken
+POST   /content/elements           Element erstellen
+GET    /content/archive            Archivierte Assets
+POST   /content/archive            Asset archivieren
+```
+
+#### Tasks & Sessions
+```
+GET    /tasks                      Alle Tasks
+GET    /tasks/pending              Offene Tasks
+POST   /tasks                      Task erstellen
+PUT    /tasks/:id                  Task aktualisieren
+DELETE /tasks/:id                  Task löschen
+GET    /sessions                   Alle Sessions
+GET    /sessions/stats             Session-Statistiken
+GET    /sessions/current           Aktuelle Session
+POST   /sessions/start             Session starten
+POST   /sessions/:id/complete      Session abschließen
+POST   /sessions/:id/stop          Session stoppen
 ```
 
 #### CRM
 ```
-GET    /crm/contacts             - Alle Kontakte
-GET    /crm/contacts/:id         - Kontakt + Historie
-POST   /crm/contacts             - Kontakt erstellen
-PUT    /crm/contacts/:id         - Kontakt aktualisieren
-DELETE /crm/contacts/:id         - Kontakt löschen
-POST   /crm/contacts/:id/communication - Kommunikation loggen
-GET    /crm/followups            - Überfällige Follow-ups
+GET    /crm/contacts               Alle Kontakte
+GET    /crm/contacts/:id           Kontakt + Historie
+POST   /crm/contacts               Kontakt erstellen
+PUT    /crm/contacts/:id           Kontakt aktualisieren
+DELETE /crm/contacts/:id           Kontakt löschen
+POST   /crm/contacts/:id/communication   Kommunikation loggen
+GET    /crm/followups              Überfällige Follow-ups
 ```
 
 #### Goals
 ```
-GET    /goals                - Alle Ziele
-GET    /goals?status=active  - Gefilterte Ziele
-GET    /goals/:id            - Einzelnes Ziel
-POST   /goals                - Ziel erstellen
-PUT    /goals/:id            - Ziel aktualisieren
-DELETE /goals/:id            - Ziel löschen
-GET    /goals/stats/overview - Statistiken
+GET    /goals                      Alle Ziele
+GET    /goals?status=active        Gefilterte Ziele
+POST   /goals                      Ziel erstellen
+PUT    /goals/:id                  Ziel aktualisieren
+DELETE /goals/:id                  Ziel löschen
+GET    /goals/stats/overview       Statistiken
+```
+
+#### Projects (Branding Board)
+```
+GET    /projects                   Alle Projekte
+GET    /projects/:id               Projekt mit Details
+POST   /projects                   Projekt erstellen
+PUT    /projects/:id               Projekt aktualisieren
+DELETE /projects/:id               Projekt löschen
+GET    /projects/:id/stats         Projekt-Statistiken
+GET    /projects/:id/assets        Alle Assets
+POST   /projects/:id/assets        Asset hinzufügen
+PUT    /projects/:pid/assets/:aid  Asset aktualisieren
+DELETE /projects/:pid/assets/:aid  Asset löschen
+GET    /projects/:id/documents     Alle Dokumente
+POST   /projects/:id/documents     Dokument erstellen
+PUT    /projects/:pid/documents/:did   Dokument aktualisieren
+DELETE /projects/:pid/documents/:did   Dokument löschen
+GET    /projects/:id/milestones    Alle Milestones
+POST   /projects/:id/milestones    Milestone erstellen
+PUT    /projects/:pid/milestones/:mid  Milestone aktualisieren
+DELETE /projects/:pid/milestones/:mid  Milestone löschen
 ```
 
 #### Terminal
 ```
-POST   /terminal/execute         - Command ausführen
-GET    /terminal/files           - Dateien listen
-GET    /terminal/files/read      - Datei lesen
-POST   /terminal/files/write     - Datei schreiben
-GET    /terminal/cwd             - Working Directory
-```
-
-### Request/Response Beispiele
-
-#### Task erstellen
-```javascript
-// Request
-POST /api/tasks
-{
-  "title": "Mutuus Landing Page designen",
-  "description": "Wireframes + Design System",
-  "priority": 5,
-  "category": "mutuus",
-  "estimated_sessions": 4,
-  "due_date": "2025-01-15"
-}
-
-// Response
-{
-  "id": "uuid-123",
-  "title": "Mutuus Landing Page designen",
-  "status": "todo",
-  "priority": 5,
-  "created_at": "2025-12-31T12:00:00Z",
-  ...
-}
-```
-
-#### Session starten
-```javascript
-// Request
-POST /api/sessions/start
-{
-  "task_id": "uuid-123"
-}
-
-// Response
-{
-  "id": "session-456",
-  "task_id": "uuid-123",
-  "task_title": "Mutuus Landing Page designen",
-  "started_at": "2025-12-31T12:00:00Z",
-  "status": "running",
-  "duration_minutes": 30
-}
-```
-
-#### AI Chat
-```javascript
-// Request
-POST /api/ai/chat
-{
-  "messages": [
-    { "role": "user", "content": "Was steht heute an?" }
-  ],
-  "context": {
-    "current_task": "uuid-123",
-    "active_sessions": 2
-  }
-}
-
-// Response
-{
-  "message": "Heute hast du 3 Tasks geplant: Mutuus Landing Page, Bewerbung bei Firma X, und Sprint Planning. Am besten startest du mit der Landing Page!"
-}
+POST   /terminal/execute           Command ausführen
+GET    /terminal/files             Dateien listen
+GET    /terminal/files/read        Datei lesen
+POST   /terminal/files/write       Datei schreiben
+GET    /terminal/cwd               Working Directory
 ```
 
 ---
 
-## 🗄️ Datenbank-Schema
+## 7. Datenbank-Schema
 
-### SQLite Tabellen
+### 7.1 Haupt-Tabellen
 
 #### tasks
 ```sql
-CREATE TABLE tasks (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  description TEXT,
-  status TEXT DEFAULT 'todo',
-  priority INTEGER DEFAULT 0,
-  estimated_sessions INTEGER DEFAULT 1,
-  category TEXT DEFAULT 'general',
-  tags TEXT,
-  due_date DATETIME,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+id TEXT PRIMARY KEY
+title TEXT NOT NULL
+description TEXT
+status TEXT DEFAULT 'todo'
+priority INTEGER DEFAULT 0
+estimated_sessions INTEGER DEFAULT 1
+category TEXT DEFAULT 'general'
+tags TEXT
+due_date DATETIME
+created_at, updated_at DATETIME
 ```
 
 #### work_sessions
 ```sql
-CREATE TABLE work_sessions (
-  id TEXT PRIMARY KEY,
-  task_id TEXT NOT NULL,
-  started_at DATETIME NOT NULL,
-  ended_at DATETIME,
-  duration_minutes INTEGER DEFAULT 30,
-  status TEXT DEFAULT 'running',
-  documentation TEXT,
-  ai_summary TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
-);
+id TEXT PRIMARY KEY
+task_id TEXT NOT NULL (FK → tasks)
+started_at DATETIME NOT NULL
+ended_at DATETIME
+duration_minutes INTEGER DEFAULT 30
+status TEXT DEFAULT 'running'
+documentation TEXT
+ai_summary TEXT
+created_at DATETIME
 ```
 
-#### crm_contacts
+#### content_ideas
 ```sql
-CREATE TABLE crm_contacts (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  type TEXT DEFAULT 'client',
-  email TEXT,
-  phone TEXT,
-  company TEXT,
-  notes TEXT,
-  last_contact DATETIME,
-  next_followup DATETIME,
-  tags TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+id TEXT PRIMARY KEY
+title TEXT NOT NULL
+description TEXT
+platform TEXT
+category TEXT
+status TEXT DEFAULT 'idea'
+priority INTEGER DEFAULT 0
+thumbnail_url TEXT
+notes TEXT
+target_date, published_date DATETIME
+created_at, updated_at DATETIME
 ```
 
-#### communication_log
+#### content_elements
 ```sql
-CREATE TABLE communication_log (
-  id TEXT PRIMARY KEY,
-  contact_id TEXT,
-  type TEXT NOT NULL,
-  subject TEXT,
-  content TEXT,
-  direction TEXT DEFAULT 'outgoing',
-  status TEXT DEFAULT 'sent',
-  scheduled_at DATETIME,
-  sent_at DATETIME,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (contact_id) REFERENCES crm_contacts(id) ON DELETE SET NULL
-);
+id TEXT PRIMARY KEY
+content_id TEXT NOT NULL (FK → content_ideas)
+element_type TEXT NOT NULL
+title TEXT
+content TEXT
+file_path, file_url TEXT
+status TEXT DEFAULT 'missing'
+notes TEXT
+order_index INTEGER DEFAULT 0
+created_at, updated_at DATETIME
 ```
 
-#### goals
+#### ai_agents
 ```sql
-CREATE TABLE goals (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  description TEXT,
-  category TEXT,
-  target_date DATETIME,
-  status TEXT DEFAULT 'active',
-  progress INTEGER DEFAULT 0,
-  metrics TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+id TEXT PRIMARY KEY
+name TEXT NOT NULL
+description TEXT
+system_prompt TEXT
+model TEXT DEFAULT 'llama3.2'
+hierarchy TEXT DEFAULT 'worker'
+parent_id TEXT (FK → ai_agents)
+active INTEGER DEFAULT 1
+config TEXT
+created_at, updated_at DATETIME
 ```
 
-#### job_applications
+#### social_profiles
 ```sql
-CREATE TABLE job_applications (
-  id TEXT PRIMARY KEY,
-  company TEXT NOT NULL,
-  position TEXT NOT NULL,
-  status TEXT DEFAULT 'applied',
-  applied_date DATETIME,
-  interview_date DATETIME,
-  notes TEXT,
-  salary_range TEXT,
-  job_url TEXT,
-  contact_person TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+id TEXT PRIMARY KEY
+platform TEXT NOT NULL
+username TEXT
+access_token TEXT
+refresh_token TEXT
+token_expires_at DATETIME
+connected INTEGER DEFAULT 0
+followers, following, posts INTEGER DEFAULT 0
+engagement_rate REAL DEFAULT 0
+last_sync DATETIME
+profile_data TEXT
+created_at, updated_at DATETIME
 ```
 
-#### mutuus_milestones
+#### social_metrics
 ```sql
-CREATE TABLE mutuus_milestones (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  description TEXT,
-  target_date DATETIME,
-  status TEXT DEFAULT 'pending',
-  progress INTEGER DEFAULT 0,
-  dependencies TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+id TEXT PRIMARY KEY
+profile_id TEXT NOT NULL (FK → social_profiles)
+metric_date DATE NOT NULL
+followers, following, posts INTEGER DEFAULT 0
+likes, comments, shares INTEGER DEFAULT 0
+reach, impressions INTEGER DEFAULT 0
+engagement_rate REAL DEFAULT 0
+created_at DATETIME
 ```
 
-### Datenbank Location
-```
-/home/pi2/Desktop/bratanasisstent/backend/data/bratandrillmanager.db
-```
+### 7.2 Weitere Tabellen
+
+- `projects` - Multi-Projekt-Management
+- `branding_assets` - Logos, Farben, etc.
+- `project_documents` - PRD, Pitch Deck
+- `project_milestones` - Milestones mit Progress
+- `crm_contacts` - Kontaktverwaltung
+- `communication_log` - Email, Call, Meeting
+- `goals` - Ziel-Tracking
+- `job_applications` - Bewerbungen
+- `sales_pipeline_stages` - Pipeline Stufen
+- `sales_pipeline_contacts` - Partner Tracking
+- `integrations` - Externe Services
+- `ai_conversations` - Chat Historie
+- `ai_messages` - Chat Messages
+- `ai_user_facts` - User Memory
+- `daily_habits` - Tägliche Gewohnheiten
+- `automation_rules` - Automation Regeln
+- `automation_logs` - Ausführungs-Logs
 
 ---
 
-## 🎨 Frontend-Komponenten
+## 8. Frontend-Komponenten
 
-### Design System
+### 8.1 Design System
 
-#### Farben
+**CSS Variablen:**
 ```css
 :root {
   --neon-green: #00ff88;
@@ -876,530 +682,170 @@ CREATE TABLE mutuus_milestones (
 }
 ```
 
-#### Typografie
-- Font: Inter, -apple-system, BlinkMacSystemFont
-- Headings: 900 weight, uppercase, letter-spacing
+**Typografie:**
+- Font: Inter, -apple-system
+- Headings: 900 weight, uppercase
 - Text: 400-600 weight
 
-#### Animationen
-- `fadeIn` - Einblenden
-- `slideUp` - Von unten einsliden
-- `pulse` - Pulsieren
-- `glow` - Neon-Glow Effekt
-- `float` - Schweben
-- `gradientShift` - Gradient-Animation
+**Animationen:**
+- `fadeIn`, `slideUp`, `pulse`
+- `glow`, `float`, `gradientShift`
 
-### Komponenten-Hierarchie
+### 8.2 Komponenten-Hierarchie
+
 ```
-App
+App.tsx (Router)
 ├── Header (Navigation)
-├── Main
+├── Main Content
 │   ├── Dashboard (/)
-│   ├── Sessions (/sessions)
-│   ├── SOPs (/sops)
-│   └── Workspace (/workspace)
+│   ├── ContentPlan (/content)
+│   │   ├── ContentIdeaForm
+│   │   ├── ContentDetail
+│   │   └── ContentArchive
+│   ├── BrandingBoard (/branding)
+│   ├── IntegrationsHub (/integrations)
+│   │   ├── AIIntegrations
+│   │   ├── AnalyticsDashboard
+│   │   ├── OllamaPanel
+│   │   ├── LmStudioPanel
+│   │   ├── AutomationsPanel
+│   │   └── SocialProfilesPanel
+│   ├── CRM (/crm)
+│   ├── GoalTracker (/goals)
+│   ├── FileManager (/files)
+│   └── Terminal (/terminal)
 └── AIAssistant (Floating Widget)
 ```
 
----
+### 8.3 State Management
 
-## 🤖 AI-Integration
-
-### Flexible AI Provider (Gemini ODER Ollama)
-
-Das System unterstützt jetzt zwei AI-Provider:
-- **Google Gemini Pro** (Cloud-basiert, benötigt API Key)
-- **Ollama** (Lokal, Privacy-First, kostenlos)
-
-#### Konfiguration
-
-**Environment Variables** (`backend/.env`):
-```bash
-# AI Provider wählen: 'gemini' oder 'ollama'
-AI_PROVIDER=gemini
-
-# Google Gemini Konfiguration
-GEMINI_API_KEY=your_api_key_here
-
-# Ollama Konfiguration
-OLLAMA_API_URL=http://localhost:11434
-OLLAMA_MODEL=llama2
-```
-
-#### Ollama Setup (empfohlen für Privacy)
-
-1. **Installiere Ollama**: https://ollama.ai
-2. **Downloade ein Modell**:
-   ```bash
-   # Standard Modell
-   ollama pull llama2
-
-   # Oder andere Modelle:
-   ollama pull mistral        # Schnell & effizient
-   ollama pull codellama      # Für Code-Generation
-   ollama pull llama2:70b     # Sehr leistungsfähig
-   ollama pull phi            # Klein & schnell
-   ```
-3. **Starte Ollama**:
-   ```bash
-   ollama serve
-   ```
-4. **Konfiguriere Backend**:
-   ```bash
-   # In backend/.env
-   AI_PROVIDER=ollama
-   OLLAMA_MODEL=llama2
-   ```
-5. **Backend neu starten**
-
-#### API Verwendung
-
-**Alle AI-Funktionen arbeiten transparent mit beiden Providern:**
-
-**Chat** (`POST /api/ai/chat`):
-```javascript
-const response = await axios.post('http://localhost:3001/api/ai/chat', {
-  messages: [
-    { role: 'user', content: 'Was steht heute an?' }
-  ],
-  context: { current_task: 'task-123' }
-});
-
-// Response enthält Provider-Info
-console.log(response.data.message);     // AI Response
-console.log(response.data.provider);    // 'gemini' oder 'ollama'
-console.log(response.data.model);       // 'gemini-pro' oder 'llama2'
-```
-
-**Session Zusammenfassung** (`POST /api/ai/summarize-session`):
-```javascript
-const response = await axios.post('http://localhost:3001/api/ai/summarize-session', {
-  taskTitle: 'Mutuus Landing Page',
-  documentation: 'Wireframes erstellt, Design System aufgesetzt...'
-});
-```
-
-**SOP Generierung** (`POST /api/ai/generate-sop`):
-```javascript
-const response = await axios.post('http://localhost:3001/api/ai/generate-sop', {
-  processName: 'Content Creation Workflow',
-  sessions: [...]
-});
-```
-
-**Provider Status** (`GET /api/ai/config`):
-```javascript
-const response = await axios.get('http://localhost:3001/api/ai/config');
-console.log(response.data);
-// {
-//   "provider": "ollama",
-//   "ollamaUrl": "http://localhost:11434",
-//   "ollamaModel": "llama2",
-//   "geminiConfigured": true
-// }
-```
-
-**Ollama Test** (`GET /api/ai/test-ollama`):
-```javascript
-const response = await axios.get('http://localhost:3001/api/ai/test-ollama');
-if (response.data.success) {
-  console.log('Verfügbare Modelle:', response.data.models);
-}
-```
-
-#### Interner Code (generateAIResponse Helper)
-
-```javascript
-async function generateAIResponse(prompt) {
-  if (AI_PROVIDER === 'ollama') {
-    // Ollama
-    const response = await axios.post(`${OLLAMA_API_URL}/api/generate`, {
-      model: OLLAMA_MODEL,
-      prompt: prompt,
-      stream: false
-    });
-    return response.data.response;
-  } else {
-    // Gemini
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-    const result = await model.generateContent(prompt);
-    return result.response.text();
-  }
-}
-```
-
-#### Vorteile von Ollama
-
-✅ **Privacy**: Daten bleiben lokal auf deinem Gerät
-✅ **Kostenlos**: Keine API-Gebühren
-✅ **Offline-fähig**: Funktioniert ohne Internet
-✅ **Anpassbar**: Verschiedene Modelle für verschiedene Use Cases
-✅ **Schnell**: Lokal = niedrige Latenz
-
-#### Vorteile von Gemini
-
-✅ **Cloud-basiert**: Keine lokale Hardware nötig
-✅ **Leistungsfähig**: State-of-the-art Modelle
-✅ **Einfach**: Kein lokales Setup nötig
-✅ **Updates**: Automatisch neueste Modell-Versionen
-
-### Web Speech API
-
-**Speech-to-Text**:
-```javascript
-const recognition = new webkitSpeechRecognition();
-recognition.lang = 'de-DE';
-recognition.continuous = false;
-
-recognition.onresult = (event) => {
-  const transcript = event.results[0][0].transcript;
-  console.log(transcript);
-};
-
-recognition.start();
-```
-
-**Text-to-Speech**:
-```javascript
-const utterance = new SpeechSynthesisUtterance(text);
-utterance.lang = 'de-DE';
-utterance.rate = 1.0;
-utterance.pitch = 1.0;
-
-window.speechSynthesis.speak(utterance);
-```
+React Hooks basiert:
+- `useState` für lokalen State
+- `useEffect` für Side Effects
+- `axios` für API Calls
+- Context für globalen State (bei Bedarf)
 
 ---
 
-## 💻 Entwicklung
+## 9. Entwickler-Guide
 
-### Development Server starten
+### 9.1 Development Server
+
 ```bash
-# Backend (Terminal 1)
-cd backend
-npm run dev
-# läuft auf http://localhost:3001
+# Backend mit Hot Reload
+cd backend && npm run dev
 
-# Frontend (Terminal 2)
-cd frontend
-npm run dev
-# läuft auf http://localhost:3000
+# Frontend mit Vite HMR
+cd frontend && npm run dev
 ```
 
-### Hot Reload
-- **Backend**: Nodemon watched automatisch alle `.js` Files
-- **Frontend**: Vite HMR (Hot Module Replacement)
+### 9.2 Neuen API Endpoint hinzufügen
 
-### Debugging
+1. Route erstellen: `backend/src/routes/myroute.js`
+2. In `server.js` importieren und registrieren
+3. Datenbank-Tabelle in `db.js` hinzufügen
 
-**Backend**:
-```bash
-# Mit Debug Logs
-DEBUG=* npm run dev
+### 9.3 Neue Frontend-Komponente
 
-# Node Inspector
-node --inspect src/server.js
-```
+1. Ordner erstellen: `frontend/src/components/MyComponent/`
+2. `MyComponent.tsx` + `MyComponent.css` anlegen
+3. In `App.tsx` Route hinzufügen
 
-**Frontend**:
-- Browser DevTools (F12)
-- React DevTools Extension
-- Network Tab für API Calls
+### 9.4 Code-Konventionen
 
-### Testing
-
-**Backend**:
-```bash
-# Manual API Testing
-curl http://localhost:3001/api/health
-
-# oder Postman/Insomnia
-```
-
-**Frontend**:
-```bash
-# Build Test
-npm run build
-npm run preview
-```
-
-### Database Management
-
-**Zugriff**:
-```bash
-cd backend/data
-sqlite3 bratandrillmanager.db
-
-# SQL Commands
-.tables
-.schema tasks
-SELECT * FROM tasks;
-```
-
-**Backup**:
-```bash
-cp bratandrillmanager.db bratandrillmanager.db.backup
-```
-
-**Reset**:
-```bash
-rm bratandrillmanager.db
-# Server neu starten - DB wird automatisch neu erstellt
-```
-
----
-
-## 🚀 Deployment
-
-### Production Build
-
-**Frontend**:
-```bash
-cd frontend
-npm run build
-# Output in: dist/
-```
-
-**Backend**:
-```bash
-cd backend
-npm start
-# Production mode
-```
-
-### Environment Variables
-
-**Backend (.env)**:
-```bash
-NODE_ENV=production
-PORT=3001
-GEMINI_API_KEY=your_key_here
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-```
-
-### Hosting Options
-
-**Option 1: Raspberry Pi (Local)**
-- Bereits auf Pi
-- Zugriff via LAN: `http://192.168.x.x:3000`
-
-**Option 2: Cloud (DigitalOcean, AWS, etc.)**
-```bash
-# PM2 Process Manager
-npm install -g pm2
-
-# Backend starten
-cd backend
-pm2 start src/server.js --name bratan-backend
-
-# Frontend bauen & serven
-cd frontend
-npm run build
-pm2 serve dist 3000 --name bratan-frontend
-```
-
-**Option 3: Docker**
-```dockerfile
-# Beispiel Dockerfile (TODO)
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3001
-CMD ["npm", "start"]
-```
-
----
-
-## 🗺️ Roadmap
-
-### Phase 1: MVP ✅ **AKTUELL**
-- [x] Dashboard
-- [x] Pomodoro Timer
-- [x] Task Management
-- [x] AI Assistant mit Roboter-Avatar
-- [x] Dateimanager (Frontend)
-- [x] Database Setup (alle Tabellen)
-- [x] API Routes (CRM, Goals, Terminal)
-
-### Phase 2: Business Features 🔨 **IN PROGRESS**
-- [ ] CRM Frontend
-- [ ] Goal Tracker Frontend
-- [ ] Terminal Frontend
-- [ ] Branding Board
-- [ ] Job Search Tracker
-- [ ] Mutuus Launch Dashboard
-
-### Phase 3: Automation 📅 **GEPLANT**
-- [ ] Auto Follow-ups (CRM)
-- [ ] Smart Scheduling
-- [ ] AI Task Priorisierung
-- [ ] Email Integration (Gmail)
-- [ ] Calendar Integration (Google Calendar)
-- [ ] Batch Operations
-
-### Phase 4: Advanced 🔮 **FUTURE**
-- [ ] Mobile App (React Native)
-- [ ] Team Features (Multi-User)
-- [ ] API für Third-Party
-- [ ] Plugins System
-- [ ] Analytics Dashboard
-- [ ] Notifications System
-
----
-
-## 📝 Code-Konventionen
-
-### TypeScript
+**TypeScript:**
 ```typescript
-// Interface naming: PascalCase
-interface Task {
-  id: string;
-  title: string;
-}
+// Interface: PascalCase
+interface ContentIdea { ... }
 
-// Function naming: camelCase
-const createTask = (data: TaskData) => { ... }
+// Function: camelCase
+const createIdea = (data: IdeaData) => { ... }
 
-// Component naming: PascalCase
+// Component: PascalCase
 export default function Dashboard() { ... }
 ```
 
-### CSS
+**CSS (BEM-ähnlich):**
 ```css
-/* BEM-ähnlich */
 .component-name { }
 .component-name__element { }
 .component-name--modifier { }
-
-/* States */
 .component.is-active { }
-.component.is-loading { }
 ```
 
-### Git Commits
-```bash
-# Format
-<type>: <subject>
-
-# Typen
+**Git Commits:**
+```
 feat: Neues Feature
 fix: Bugfix
 docs: Dokumentation
 style: Formatierung
 refactor: Code-Refactoring
-test: Tests
-chore: Maintenance
 ```
 
----
+### 9.5 Troubleshooting
 
-## 🐛 Troubleshooting
-
-### Backend startet nicht
+**Backend startet nicht:**
 ```bash
-# Port belegt?
-lsof -i :3001
-kill -9 <PID>
-
-# Dependencies fehlen?
-rm -rf node_modules
-npm install
-
-# Database Error?
-rm backend/data/bratandrillmanager.db
-# Server neu starten
+lsof -i :3001  # Port prüfen
+kill -9 <PID>  # Process beenden
+rm -rf node_modules && npm install
 ```
 
-### Frontend startet nicht
+**Frontend startet nicht:**
 ```bash
-# Port belegt?
 lsof -i :3000
-kill -9 <PID>
-
-# Vite Error?
-rm -rf node_modules .vite
-npm install
+rm -rf node_modules .vite && npm install
 ```
 
-### AI funktioniert nicht
+**Database Lock:**
 ```bash
-# API Key prüfen
-cat backend/.env | grep GEMINI
-
-# API Rate Limit?
-# Warten oder neuen Key holen
-```
-
-### Database Lock Error
-```bash
-# SQLite Timeout
-# Alle Connections schließen
 pkill -f "node.*server.js"
 # Neu starten
 ```
 
----
-
-## 📞 Support & Kontakt
-
-### Entwickler
-- **Name**: BratanDrillManager Team
-- **Location**: /home/pi2/Desktop/bratanasisstent
-
-### Logs
+**Ollama nicht erreichbar:**
 ```bash
-# Backend Logs
-cd backend
-npm run dev
-# Output in Console
+# Starte Ollama
+ollama serve
 
-# Frontend Logs
-# Browser Console (F12)
-```
-
-### Dokumentation aktualisieren
-Diese Datei editieren:
-```bash
-nano /home/pi2/Desktop/bratanasisstent/CLAUDE.md
+# Modell laden
+ollama pull llama3.2
 ```
 
 ---
 
-## 🎯 Quick Start Guide
+## Roadmap
 
-**Für neue Entwickler:**
+### Phase 1: MVP ✅
+- [x] Dashboard
+- [x] Pomodoro Timer
+- [x] Task Management
+- [x] AI Assistant (Bratan)
+- [x] Content Plan
+- [x] Branding Board
 
-1. Projekt verstehen: Lies [Projekt-Übersicht](#projekt-übersicht)
-2. Setup: Folge [Installation & Setup](#installation--setup)
-3. Architektur: Schau dir [Architektur](#architektur) an
-4. Start: Nutze `./start.sh`
-5. Entwickeln: Ändere Code, HMR macht den Rest
-6. API testen: Nutze [API-Dokumentation](#api-dokumentation)
-7. Deployen: Siehe [Deployment](#deployment)
+### Phase 2: Integrations ✅
+- [x] Ollama Integration
+- [x] LM Studio Support
+- [x] n8n Automation
+- [x] Agent Hierarchie
+- [x] Social Media Profiles
 
-**Für Benutzer:**
+### Phase 3: Analytics 🔨
+- [ ] Live Social Metrics
+- [ ] Performance Dashboard
+- [ ] ROI Tracking
+- [ ] A/B Testing
 
-1. `./start.sh` ausführen
-2. Browser öffnen: http://localhost:3000
-3. Roboter-Avatar anklicken → Chat mit Bratan
-4. "Start" Button → Pomodoro Session starten
-5. Tasks verwalten, Ziele tracken, produktiv sein!
-
----
-
-## 📄 Lizenz
-
-Personal Use Only - Kein Open Source (noch)
-
----
-
-**Version**: 1.0.0
-**Letztes Update**: 2025-12-31
-**Status**: Beta / In Development
+### Phase 4: Advanced 🔮
+- [ ] Mobile App (React Native)
+- [ ] Team Features (Multi-User)
+- [ ] Plugin System
+- [ ] AI Workflows
 
 ---
 
-*Diese Dokumentation ist dynamisch und wird kontinuierlich aktualisiert.*
+**Dokumentation erstellt:** Januar 2026
+**Maintainer:** KensenichManager Team
+
+*Diese Dokumentation wird kontinuierlich aktualisiert.*

@@ -1,6 +1,27 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { runAsync, getAsync, allAsync } from '../db.js';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, '../../uploads/assets');
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, uniqueSuffix + ext);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 const router = express.Router();
 
@@ -375,19 +396,26 @@ router.get('/archive/:id', async (req, res) => {
 });
 
 // Create archived item
-router.post('/archive', async (req, res) => {
+router.post('/archive', upload.single('file'), async (req, res) => {
   try {
     const {
       title,
       element_type,
       content,
-      file_path,
-      file_url,
       tags,
       platform,
       category,
       notes
     } = req.body;
+
+    let file_path = null;
+    let file_url = null;
+
+    // Handle file upload
+    if (req.file) {
+      file_path = req.file.path;
+      file_url = `/uploads/assets/${req.file.filename}`;
+    }
 
     const id = uuidv4();
 

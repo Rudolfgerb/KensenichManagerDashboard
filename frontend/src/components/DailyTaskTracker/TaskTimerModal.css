@@ -1,0 +1,267 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.timer-modal {
+  text-align: center;
+}
+
+.timer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.timer-header h2 {
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.btn-minimize {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-minimize:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+.timer-container {
+  position: relative;
+  margin: 0 auto 1.5rem;
+  width: 260px;
+  height: 260px;
+}
+
+.timer-circle {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-progress {
+  transition: stroke-dashoffset 0.2s ease;
+}
+
+.timer-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.time {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.label {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.timer-info {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.info-item {
+  text-align: center;
+}
+
+.info-label {
+  font-size: 0.8rem;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--neon-green);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #00e67a;
+}
+
+.btn-primary:disabled {
+  background: var(--disabled-bg);
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  background: var(--error-color);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #ff4444;
+}
+
+.documentation-modal {
+  text-align: left;
+}
+
+.documentation-header h2 {
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.documentation-header p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.documentation-form textarea {
+  width: 100%;
+  min-height: 150px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.documentation-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.timer-minimized {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.timer-minimized:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.timer-mini-circle {
+  width: 40px;
+  height: 40px;
+}
+
+.mini-time {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.timer-mini-info {
+  flex: 1;
+}
+
+.mini-task {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  display: block;
+}
+
+.mini-status {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.mini-stop-btn {
+  background: var(--error-color);
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-stop-btn:hover {
+  background: #ff4444;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .timer-container {
+    width: 220px;
+    height: 220px;
+  }
+  
+  .time {
+    font-size: 2rem;
+  }
+}

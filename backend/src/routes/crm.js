@@ -142,4 +142,134 @@ router.get('/followups', async (req, res) => {
   }
 });
 
+// ═══ CRM Tasks ═══
+
+// Get all CRM tasks
+router.get('/tasks', async (req, res) => {
+  try {
+    const { status, contact_id, deal_id } = req.query;
+
+    let query = `
+      SELECT t.*, c.name as contact_name, d.title as deal_title
+      FROM crm_tasks t
+      LEFT JOIN crm_contacts c ON t.contact_id = c.id
+      LEFT JOIN crm_deals d ON t.deal_id = d.id
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (status && status !== 'all') {
+      query += ' AND t.status = ?';
+      params.push(status);
+    }
+    if (contact_id) {
+      query += ' AND t.contact_id = ?';
+      params.push(contact_id);
+    }
+    if (deal_id) {
+      query += ' AND t.deal_id = ?';
+      params.push(deal_id);
+    }
+
+    query += ' ORDER BY t.due_date ASC NULLS LAST, t.created_at DESC';
+
+    const tasks = await allAsync(query, params);
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get single CRM task
+router.get('/tasks/:id', async (req, res) => {
+  try {
+    const task = await getAsync(`
+      SELECT t.*, c.name as contact_name, d.title as deal_title
+      FROM crm_tasks t
+      LEFT JOIN crm_contacts c ON t.contact_id = c.id
+      LEFT JOIN crm_deals d ON t.deal_id = d.id
+      WHERE t.id = ?
+    `, req.params.id);
+
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+    res.json(task);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create CRM task
+router.post('/tasks', async (req, res) => {
+  try {
+    const { title, description, task_type, priority, due_date, contact_id, deal_id, assigned_to, reminder_at } = req.body;
+    const id = uuidv4();
+
+    await runAsync(`
+      INSERT INTO crm_tasks (id, title, description, task_type, priority, due_date, contact_id, deal_id, assigned_to, reminder_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [id, title, description, task_type || 'todo', priority || 'normal', due_date, contact_id, deal_id, assigned_to, reminder_at]);
+
+    const task = await getAsync('SELECT * FROM crm_tasks WHERE id = ?', id);
+    res.status(201).json(task);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update CRM task
+router.put('/tasks/:id', async (req, res) => {
+  try {
+    const { title, description, task_type, priority, status, due_date, contact_id, deal_id } = req.body;
+
+    await runAsync(`
+      UPDATE crm_tasks SET
+        title = COALESCE(?, title),
+        description = COALESCE(?, description),
+        task_type = COALESCE(?, task_type),
+        priority = COALESCE(?, priority),
+        status = COALESCE(?, status),
+        due_date = COALESCE(?, due_date),
+        contact_id = COALESCE(?, contact_id),
+        deal_id = COALESCE(?, deal_id),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `, [title, description, task_type, priority, status, due_date, contact_id, deal_id, req.params.id]);
+
+    const task = await getAsync('SELECT * FROM crm_tasks WHERE id = ?', req.params.id);
+    res.json(task);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Complete CRM task
+router.post('/tasks/:id/complete', async (req, res) => {
+  try {
+    await runAsync(`
+      UPDATE crm_tasks SET
+        status = 'completed',
+        completed_at = CURRENT_TIMESTAMP,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `, req.params.id);
+
+    const task = await getAsync('SELECT * FROM crm_tasks WHERE id = ?', req.params.id);
+    res.json(task);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete CRM task
+router.delete('/tasks/:id', async (req, res) => {
+  try {
+    await runAsync('DELETE FROM crm_tasks WHERE id = ?', req.params.id);
+    res.json({ message: 'Task deleted' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
