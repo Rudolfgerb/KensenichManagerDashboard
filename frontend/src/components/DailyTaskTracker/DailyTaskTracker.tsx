@@ -11,6 +11,16 @@ interface DailyTask extends Task {
   goal_title?: string;
   completion_date?: string;
   is_completed?: boolean;
+  parent_task_id?: string;
+  subtasks?: DailyTask[];
+}
+
+interface GoalGroup {
+  goal_id: string;
+  goal_title: string;
+  tasks: DailyTask[];
+  completedCount: number;
+  totalCount: number;
 }
 
 interface TaskCompletionHistory {
@@ -33,19 +43,23 @@ export default function DailyTaskTracker() {
   const [showTimer, setShowTimer] = useState(false);
   const [selectedTask, setSelectedTask] = useState<DailyTask | null>(null);
   const [currentSession, setCurrentSession] = useState<WorkSession | null>(null);
-  
+
   // Task data
   const [todayTasks, setTodayTasks] = useState<DailyTask[]>([]);
   const [yesterdayTasks, setYesterdayTasks] = useState<DailyTask[]>([]);
   const [allTasks, setAllTasks] = useState<DailyTask[]>([]);
   const [completionHistory, setCompletionHistory] = useState<TaskCompletionHistory[]>([]);
-  
+
   // UI state
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [editingTask, setEditingTask] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [backendAvailable, setBackendAvailable] = useState(true);
+
+  // Collapsible state for goals
+  const [expandedGoals, setExpandedGoals] = useState<Set<string>>(new Set());
+  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
 
   // Check backend connectivity
   const checkBackendConnectivity = async () => {
@@ -292,6 +306,79 @@ export default function DailyTaskTracker() {
   // Calculate completion stats
   const todayCompleted = todayTasks.filter(t => t.is_completed).length;
   const yesterdayCompleted = yesterdayTasks.filter(t => t.is_completed).length;
+
+  // Group tasks by goal
+  const groupTasksByGoal = (tasks: DailyTask[]): GoalGroup[] => {
+    const goalMap = new Map<string, GoalGroup>();
+
+    // First pass: group parent tasks by goal
+    tasks.forEach(task => {
+      if (task.parent_task_id) return; // Skip subtasks in first pass
+
+      const goalId = task.goal_id || 'no-goal';
+      const goalTitle = task.goal_title || 'Ohne Ziel';
+
+      if (!goalMap.has(goalId)) {
+        goalMap.set(goalId, {
+          goal_id: goalId,
+          goal_title: goalTitle,
+          tasks: [],
+          completedCount: 0,
+          totalCount: 0
+        });
+      }
+
+      const group = goalMap.get(goalId)!;
+      // Find subtasks for this task
+      const subtasks = tasks.filter(t => t.parent_task_id === task.id);
+      const taskWithSubtasks = { ...task, subtasks };
+
+      group.tasks.push(taskWithSubtasks);
+      group.totalCount += 1 + subtasks.length;
+      group.completedCount += (task.is_completed ? 1 : 0) + subtasks.filter(s => s.is_completed).length;
+    });
+
+    return Array.from(goalMap.values()).sort((a, b) => {
+      // "Ohne Ziel" always last
+      if (a.goal_id === 'no-goal') return 1;
+      if (b.goal_id === 'no-goal') return -1;
+      return a.goal_title.localeCompare(b.goal_title);
+    });
+  };
+
+  const toggleGoal = (goalId: string) => {
+    setExpandedGoals(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(goalId)) {
+        newSet.delete(goalId);
+      } else {
+        newSet.add(goalId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleTask = (taskId: string) => {
+    setExpandedTasks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+      }
+      return newSet;
+    });
+  };
+
+  // Auto-expand all goals on first load
+  useEffect(() => {
+    const goalGroups = groupTasksByGoal(todayTasks);
+    const allGoalIds = new Set(goalGroups.map(g => g.goal_id));
+    setExpandedGoals(allGoalIds);
+  }, [todayTasks.length]);
+
+  const todayGoalGroups = groupTasksByGoal(todayTasks);
+  const yesterdayGoalGroups = groupTasksByGoal(yesterdayTasks);
   
   return (
     <div className="daily-task-tracker">
@@ -320,103 +407,185 @@ export default function DailyTaskTracker() {
         </button>
       </div>
 
-      {/* Today's Tasks */}
+      {/* Today's Tasks - Grouped by Goals */}
       <div className="tasks-section today-tasks">
         <h3>📅 Heute ({todayTasks.length})</h3>
-        {todayTasks.length === 0 ? (
+        {todayGoalGroups.length === 0 ? (
           <div className="empty-tasks">
             <p>Keine Aufgaben für heute. Füge Aufgaben hinzu oder wähle aus deinen Zielen.</p>
           </div>
         ) : (
-          <div className="tasks-grid">
-            {todayTasks.map(task => (
-              <div
-                key={task.id}
-                className={`task-card ${task.is_completed ? 'completed' : ''} ${editingTask === task.id ? 'editing' : ''}`}
-              >
-                {editingTask === task.id ? (
-                  <div className="task-edit-form">
-                    <input
-                      type="text"
-                      value={editTitle}
-                      onChange={(e) => setEditTitle(e.target.value)}
-                      placeholder="Aufgabenname"
-                      className="task-edit-title"
-                      autoFocus
-                    />
-                    <textarea
-                      value={editDescription}
-                      onChange={(e) => setEditDescription(e.target.value)}
-                      placeholder="Beschreibung (optional)"
-                      className="task-edit-description"
-                    />
-                    <div className="task-edit-actions">
-                      <button className="btn-save" onClick={saveTaskEdit}>✓ Speichern</button>
-                      <button className="btn-cancel" onClick={cancelEdit}>✕ Abbrechen</button>
-                      <button
-                        className="btn-delete"
-                        onClick={() => {
-                          cancelEdit();
-                          deleteTask(task.id);
-                        }}
-                      >
-                        🗑️ Löschen
-                      </button>
+          <div className="goal-groups">
+            {todayGoalGroups.map(goalGroup => (
+              <div key={goalGroup.goal_id} className="goal-group">
+                {/* Goal Header - Collapsible */}
+                <div
+                  className={`goal-header ${expandedGoals.has(goalGroup.goal_id) ? 'expanded' : 'collapsed'}`}
+                  onClick={() => toggleGoal(goalGroup.goal_id)}
+                >
+                  <div className="goal-header-left">
+                    <span className={`goal-expand-icon ${expandedGoals.has(goalGroup.goal_id) ? 'expanded' : ''}`}>
+                      ▶
+                    </span>
+                    <span className="goal-icon">🎯</span>
+                    <span className="goal-header-title">{goalGroup.goal_title}</span>
+                  </div>
+                  <div className="goal-header-right">
+                    <span className="goal-task-count">
+                      {goalGroup.completedCount}/{goalGroup.totalCount}
+                    </span>
+                    <div className="goal-progress-bar">
+                      <div
+                        className="goal-progress-fill"
+                        style={{ width: `${goalGroup.totalCount > 0 ? (goalGroup.completedCount / goalGroup.totalCount) * 100 : 0}%` }}
+                      />
                     </div>
                   </div>
-                ) : (
-                  <>
-                    <div className="task-header">
-                      <h4 className="task-title">{task.title}</h4>
-                      <div className="task-actions">
-                        <button
-                          className="btn-edit-task"
-                          onClick={() => startEditTask(task)}
-                          title="Bearbeiten"
+                </div>
+
+                {/* Tasks inside Goal - Collapsible Content */}
+                {expandedGoals.has(goalGroup.goal_id) && (
+                  <div className="goal-tasks-container">
+                    {goalGroup.tasks.map(task => (
+                      <div key={task.id} className="task-with-subtasks">
+                        {/* Main Task */}
+                        <div
+                          className={`task-item ${task.is_completed ? 'completed' : ''} ${editingTask === task.id ? 'editing' : ''}`}
                         >
-                          ✏️
-                        </button>
-                        <button
-                          className="btn-delete-task"
-                          onClick={() => deleteTask(task.id)}
-                          title="Löschen"
-                        >
-                          🗑️
-                        </button>
-                        {!task.is_completed && (
-                          <button
-                            className="btn-start-task"
-                            onClick={() => handleStartTask(task)}
-                            title="Task starten"
-                          >
-                            ▶
-                          </button>
+                          {editingTask === task.id ? (
+                            <div className="task-edit-form">
+                              <input
+                                type="text"
+                                value={editTitle}
+                                onChange={(e) => setEditTitle(e.target.value)}
+                                placeholder="Aufgabenname"
+                                className="task-edit-title"
+                                autoFocus
+                              />
+                              <textarea
+                                value={editDescription}
+                                onChange={(e) => setEditDescription(e.target.value)}
+                                placeholder="Beschreibung (optional)"
+                                className="task-edit-description"
+                              />
+                              <div className="task-edit-actions">
+                                <button className="btn-save" onClick={saveTaskEdit}>✓ Speichern</button>
+                                <button className="btn-cancel" onClick={cancelEdit}>✕ Abbrechen</button>
+                                <button
+                                  className="btn-delete"
+                                  onClick={() => {
+                                    cancelEdit();
+                                    deleteTask(task.id);
+                                  }}
+                                >
+                                  🗑️ Löschen
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="task-row">
+                                {/* Subtask Toggle */}
+                                {task.subtasks && task.subtasks.length > 0 && (
+                                  <button
+                                    className={`btn-toggle-subtasks ${expandedTasks.has(task.id) ? 'expanded' : ''}`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleTask(task.id);
+                                    }}
+                                    title={expandedTasks.has(task.id) ? 'Subtasks einklappen' : 'Subtasks aufklappen'}
+                                  >
+                                    ▶
+                                  </button>
+                                )}
+                                {/* Checkbox */}
+                                <label className="task-checkbox-inline">
+                                  <input
+                                    type="checkbox"
+                                    checked={task.is_completed || false}
+                                    onChange={(e) => toggleTaskCompletion(task.id, e.target.checked)}
+                                  />
+                                  <span className="checkbox-custom-small"></span>
+                                </label>
+                                {/* Task Title */}
+                                <span className={`task-title-inline ${task.is_completed ? 'completed' : ''}`}>
+                                  {task.title}
+                                </span>
+                                {/* Subtask Count */}
+                                {task.subtasks && task.subtasks.length > 0 && (
+                                  <span className="subtask-count">
+                                    ({task.subtasks.filter(s => s.is_completed).length}/{task.subtasks.length})
+                                  </span>
+                                )}
+                                {/* Actions */}
+                                <div className="task-actions-inline">
+                                  <button
+                                    className="btn-edit-task-small"
+                                    onClick={() => startEditTask(task)}
+                                    title="Bearbeiten"
+                                  >
+                                    ✏️
+                                  </button>
+                                  <button
+                                    className="btn-delete-task-small"
+                                    onClick={() => deleteTask(task.id)}
+                                    title="Löschen"
+                                  >
+                                    🗑️
+                                  </button>
+                                  {!task.is_completed && (
+                                    <button
+                                      className="btn-start-task-small"
+                                      onClick={() => handleStartTask(task)}
+                                      title="Task starten"
+                                    >
+                                      ▶
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                              {task.description && (
+                                <p className="task-description-inline">{task.description}</p>
+                              )}
+                            </>
+                          )}
+                        </div>
+
+                        {/* Subtasks - Collapsible */}
+                        {task.subtasks && task.subtasks.length > 0 && expandedTasks.has(task.id) && (
+                          <div className="subtasks-container">
+                            {task.subtasks.map(subtask => (
+                              <div
+                                key={subtask.id}
+                                className={`subtask-item ${subtask.is_completed ? 'completed' : ''}`}
+                              >
+                                <label className="task-checkbox-inline">
+                                  <input
+                                    type="checkbox"
+                                    checked={subtask.is_completed || false}
+                                    onChange={(e) => toggleTaskCompletion(subtask.id, e.target.checked)}
+                                  />
+                                  <span className="checkbox-custom-small"></span>
+                                </label>
+                                <span className={`subtask-title ${subtask.is_completed ? 'completed' : ''}`}>
+                                  {subtask.title}
+                                </span>
+                                <div className="task-actions-inline">
+                                  <button
+                                    className="btn-delete-task-small"
+                                    onClick={() => deleteTask(subtask.id)}
+                                    title="Löschen"
+                                  >
+                                    🗑️
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
-                    </div>
-                    {task.description && (
-                      <p className="task-description">{task.description}</p>
-                    )}
-                    {task.goal_title && (
-                      <div className="task-goal-reference">
-                        <span className="goal-icon">🎯</span>
-                        <span className="goal-title">{task.goal_title}</span>
-                      </div>
-                    )}
-                    <div className="task-completion">
-                      <label className="task-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={task.is_completed || false}
-                          onChange={(e) => toggleTaskCompletion(task.id, e.target.checked)}
-                        />
-                        <span className="checkbox-custom"></span>
-                        <span className="completion-label">
-                          {task.is_completed ? 'Erledigt ✓' : 'Als erledigt markieren'}
-                        </span>
-                      </label>
-                    </div>
-                  </>
+                    ))}
+                  </div>
                 )}
               </div>
             ))}
@@ -424,40 +593,48 @@ export default function DailyTaskTracker() {
         )}
       </div>
 
-      {/* Yesterday's Tasks */}
-      {yesterdayTasks.length > 0 && (
+      {/* Yesterday's Tasks - Grouped by Goals */}
+      {yesterdayGoalGroups.length > 0 && (
         <div className="tasks-section yesterday-tasks">
           <h3>📅 Gestern ({yesterdayTasks.length})</h3>
-          <div className="tasks-grid">
-            {yesterdayTasks.map(task => (
-              <div
-                key={task.id}
-                className={`task-card ${task.is_completed ? 'completed' : 'incomplete'}`}
-              >
-                <div className="task-header">
-                  <h4 className="task-title">{task.title}</h4>
-                  <div className="task-actions">
-                    <span className={`task-status-badge ${task.is_completed ? 'completed' : 'incomplete'}`}>
-                      {task.is_completed ? '✓ Erledigt' : '✗ Nicht erledigt'}
+          <div className="goal-groups yesterday">
+            {yesterdayGoalGroups.map(goalGroup => (
+              <div key={goalGroup.goal_id} className="goal-group yesterday">
+                <div className="goal-header yesterday">
+                  <div className="goal-header-left">
+                    <span className="goal-icon">🎯</span>
+                    <span className="goal-header-title">{goalGroup.goal_title}</span>
+                  </div>
+                  <div className="goal-header-right">
+                    <span className={`goal-task-count ${goalGroup.completedCount === goalGroup.totalCount ? 'all-done' : 'incomplete'}`}>
+                      {goalGroup.completedCount}/{goalGroup.totalCount}
                     </span>
-                    <button
-                      className="btn-delete-task"
-                      onClick={() => deleteTask(task.id)}
-                      title="Löschen"
-                    >
-                      🗑️
-                    </button>
                   </div>
                 </div>
-                {task.description && (
-                  <p className="task-description">{task.description}</p>
-                )}
-                {task.goal_title && (
-                  <div className="task-goal-reference">
-                    <span className="goal-icon">🎯</span>
-                    <span className="goal-title">{task.goal_title}</span>
-                  </div>
-                )}
+                <div className="goal-tasks-container yesterday">
+                  {goalGroup.tasks.map(task => (
+                    <div
+                      key={task.id}
+                      className={`task-item yesterday ${task.is_completed ? 'completed' : 'incomplete'}`}
+                    >
+                      <div className="task-row">
+                        <span className={`task-status-icon ${task.is_completed ? 'completed' : 'incomplete'}`}>
+                          {task.is_completed ? '✓' : '✗'}
+                        </span>
+                        <span className={`task-title-inline ${task.is_completed ? 'completed' : 'incomplete'}`}>
+                          {task.title}
+                        </span>
+                        <button
+                          className="btn-delete-task-small"
+                          onClick={() => deleteTask(task.id)}
+                          title="Löschen"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
