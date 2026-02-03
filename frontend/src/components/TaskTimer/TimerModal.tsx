@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { startSession, stopSession, completeSession } from '../../services/api';
+import { useSession } from '../../context/SessionContext';
 import type { Task, WorkSession } from '../../types';
 import './TaskTimer.css';
 
@@ -18,6 +19,9 @@ export default function TimerModal({ task, onComplete, onStop }: TimerModalProps
   const [isMinimized, setIsMinimized] = useState(false);
   const intervalRef = useRef<number | null>(null);
 
+  // Global session context for Matrix animation
+  const { setSessionActive } = useSession();
+
   useEffect(() => {
     // Start session on mount
     initSession();
@@ -26,8 +30,15 @@ export default function TimerModal({ task, onComplete, onStop }: TimerModalProps
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
+      // Deactivate global Matrix when component unmounts
+      setSessionActive(false);
     };
   }, []);
+
+  // Sync global Matrix animation with running state
+  useEffect(() => {
+    setSessionActive(isRunning);
+  }, [isRunning, setSessionActive]);
 
   useEffect(() => {
     if (isRunning && secondsLeft > 0) {

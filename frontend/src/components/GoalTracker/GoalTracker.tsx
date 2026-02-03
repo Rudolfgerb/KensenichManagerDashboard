@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './GoalTracker.css';
 
@@ -69,7 +68,6 @@ const DIFFICULTY_CONFIG = {
 };
 
 export default function GoalTracker() {
-  const navigate = useNavigate();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
   const [tasks, setTasks] = useState<GoalTask[]>([]);
@@ -283,11 +281,9 @@ export default function GoalTracker() {
         await axios.put(`/api/goals/${selectedGoal.id}/tasks/${task.id}`, { status: 'in_progress' });
         loadTasks(selectedGoal.id);
       }
-      // Navigate directly to dashboard with timer active
-      navigate('/', { state: { activeSession: true, taskTitle: task.title } });
+      alert('Session gestartet! Wechsle zum Dashboard für den Timer.');
     } catch (error) {
       console.error('Error starting session:', error);
-      alert('Fehler beim Starten der Session');
     }
   };
 

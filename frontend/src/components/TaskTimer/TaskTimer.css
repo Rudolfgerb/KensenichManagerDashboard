@@ -194,6 +194,37 @@
   text-align: center;
 }
 
+/* Timer Modal with Matrix Animation */
+.timer-modal-with-matrix {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.95), rgba(20, 20, 20, 0.98)) !important;
+}
+
+.timer-modal-with-matrix > *:not(.matrix-rain-container) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Matrix glow effects on timer elements */
+.timer-modal-with-matrix .timer-display .time {
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.8), 0 0 40px rgba(0, 255, 136, 0.4);
+}
+
+.timer-modal-with-matrix .timer-circle circle[stroke="#00ff88"] {
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.6));
+}
+
+.timer-modal-with-matrix .timer-info {
+  background: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.timer-modal-with-matrix .info-value {
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
 .timer-container {
   position: relative;
   width: 260px;
@@ -303,23 +334,58 @@
   position: fixed;
   bottom: 100px;
   right: 24px;
-  background: linear-gradient(135deg, #1a1a1a, #222);
-  border: 2px solid var(--neon-green);
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.95), rgba(20, 20, 20, 0.98));
+  border: 2px solid var(--neon-green, #00ff88);
   border-radius: 16px;
   padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 255, 136, 0.3),
+    0 0 40px rgba(0, 255, 136, 0.1),
+    inset 0 0 20px rgba(0, 255, 136, 0.05);
   z-index: 9999;
   transition: all 0.3s ease;
   animation: slideInRight 0.3s ease;
+  overflow: hidden;
 }
 
 .timer-minimized:hover {
-  transform: scale(1.05);
-  box-shadow: 0 12px 40px rgba(0, 255, 136, 0.4);
+  transform: scale(1.05) translateY(-2px);
+  box-shadow:
+    0 12px 40px rgba(0, 255, 136, 0.4),
+    0 0 60px rgba(0, 255, 136, 0.2),
+    inset 0 0 30px rgba(0, 255, 136, 0.08);
+}
+
+/* Matrix rain in minimized widget */
+.timer-minimized .matrix-rain-container {
+  border-radius: 14px;
+}
+
+.timer-minimized .timer-mini-circle,
+.timer-minimized .timer-mini-info,
+.timer-minimized .mini-stop-btn {
+  position: relative;
+  z-index: 2;
+}
+
+.timer-minimized .timer-mini-circle svg {
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
+}
+
+.timer-minimized .mini-time {
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+}
+
+.timer-minimized .mini-task {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.timer-minimized .mini-status {
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
 }
 
 @keyframes slideInRight {
@@ -395,4 +461,162 @@
 .mini-stop-btn:hover {
   background: #ff4444;
   color: #fff;
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .timer-modal {
+    max-width: 95%;
+    padding: 1rem;
+  }
+
+  .timer-container {
+    width: 200px;
+    height: 200px;
+    margin: 1.5rem auto;
+  }
+
+  .timer-display .time {
+    font-size: 2.5rem;
+  }
+
+  .timer-display .label {
+    font-size: 0.8rem;
+  }
+
+  .timer-info {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  .info-label {
+    font-size: 0.7rem;
+  }
+
+  .info-value {
+    font-size: 1.2rem;
+  }
+
+  .timer-minimized {
+    bottom: 80px;
+    right: 16px;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .timer-mini-circle {
+    width: 45px;
+    height: 45px;
+  }
+
+  .mini-time {
+    font-size: 0.65rem;
+  }
+
+  .timer-mini-info {
+    max-width: 100px;
+  }
+
+  .mini-task {
+    font-size: 0.8rem;
+  }
+
+  .mini-status {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .timer-container {
+    width: 180px;
+    height: 180px;
+    margin: 1rem auto;
+  }
+
+  .timer-display .time {
+    font-size: 2rem;
+  }
+
+  .timer-info {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .modal-buttons .btn {
+    width: 100%;
+  }
+
+  .timer-minimized {
+    bottom: 70px;
+    right: 12px;
+    left: auto;
+    padding: 8px 12px;
+    max-width: calc(100vw - 24px);
+  }
+
+  .timer-mini-circle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mini-time {
+    font-size: 0.6rem;
+  }
+
+  .timer-mini-info {
+    max-width: 80px;
+  }
+
+  .mini-task {
+    font-size: 0.75rem;
+  }
+
+  .mini-stop-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Landscape mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .timer-container {
+    width: 140px;
+    height: 140px;
+    margin: 0.5rem auto;
+  }
+
+  .timer-display .time {
+    font-size: 1.5rem;
+  }
+
+  .timer-info {
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+  }
+
+  .timer-minimized {
+    bottom: 10px;
+  }
+}
+
+/* Reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .timer-minimized {
+    animation: none;
+  }
+
+  .timer-minimized:hover {
+    transform: none;
+  }
+
+  .timer-progress {
+    transition: none;
+  }
 }

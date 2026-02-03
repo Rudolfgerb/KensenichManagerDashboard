@@ -3,7 +3,7 @@
  * Global toast notifications for user feedback
  */
 
-import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
+import { useState, useCallback, createContext, useContext, ReactNode } from 'react';
 import './Toast.css';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';

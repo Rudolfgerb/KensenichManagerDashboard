@@ -287,8 +287,7 @@ router.put('/:goalId/tasks/:taskId', async (req, res) => {
       estimated_sessions,
       tags,
       order_index,
-      depends_on,
-      completion_date
+      depends_on
     } = req.body;
 
     // Check if marking as done - verify dependencies are completed
@@ -321,14 +320,6 @@ router.put('/:goalId/tasks/:taskId', async (req, res) => {
     // Handle depends_on update
     const dependsOnStr = depends_on !== undefined ? (depends_on ? JSON.stringify(depends_on) : null) : undefined;
 
-    // Handle completion_date for daily task tracker
-    let finalCompletionDate = completion_date;
-    if (status === 'done' && !completion_date) {
-      finalCompletionDate = new Date().toISOString().split('T')[0];
-    } else if (status !== 'done' && completion_date === null) {
-      finalCompletionDate = null;
-    }
-
     await runAsync(
       `UPDATE tasks
        SET title = COALESCE(?, title),
@@ -343,10 +334,9 @@ router.put('/:goalId/tasks/:taskId', async (req, res) => {
            order_index = COALESCE(?, order_index),
            completed_at = COALESCE(?, completed_at),
            depends_on = COALESCE(?, depends_on),
-           completion_date = COALESCE(?, completion_date),
            updated_at = CURRENT_TIMESTAMP
        WHERE id = ? AND goal_id = ?`,
-      [title, description, status, priority, difficulty, parent_task_id, due_date, estimated_sessions, tags, order_index, completed_at, dependsOnStr, finalCompletionDate, taskId, goalId]
+      [title, description, status, priority, difficulty, parent_task_id, due_date, estimated_sessions, tags, order_index, completed_at, dependsOnStr, taskId, goalId]
     );
 
     const task = await getAsync('SELECT * FROM tasks WHERE id = ?', taskId);

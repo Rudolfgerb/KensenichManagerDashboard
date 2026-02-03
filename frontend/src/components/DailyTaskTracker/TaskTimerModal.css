@@ -27,6 +27,18 @@
   text-align: center;
 }
 
+/* Timer Modal with Matrix Animation */
+.timer-modal-with-matrix {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.95), rgba(20, 20, 20, 0.98));
+}
+
+.timer-modal-with-matrix > *:not(.matrix-rain-container) {
+  position: relative;
+  z-index: 1;
+}
+
 .timer-header {
   display: flex;
   justify-content: space-between;
@@ -192,76 +204,269 @@
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 0.75rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.95), rgba(20, 20, 20, 0.98));
+  border: 2px solid var(--neon-green, #00ff88);
+  border-radius: 16px;
+  padding: 0.75rem 1rem;
+  box-shadow:
+    0 4px 20px rgba(0, 255, 136, 0.3),
+    0 0 40px rgba(0, 255, 136, 0.1),
+    inset 0 0 20px rgba(0, 255, 136, 0.05);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   z-index: 1001;
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  backdrop-filter: blur(10px);
+  animation: slideInRight 0.3s ease, pulseGlow 2s ease-in-out infinite;
 }
 
 .timer-minimized:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 8px 30px rgba(0, 255, 136, 0.5),
+    0 0 60px rgba(0, 255, 136, 0.3),
+    inset 0 0 30px rgba(0, 255, 136, 0.1);
+  border-color: #00ff88;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow:
+      0 4px 20px rgba(0, 255, 136, 0.3),
+      0 0 40px rgba(0, 255, 136, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 4px 25px rgba(0, 255, 136, 0.4),
+      0 0 50px rgba(0, 255, 136, 0.2);
+  }
 }
 
 .timer-mini-circle {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  z-index: 2;
+}
+
+.timer-mini-circle svg {
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
 }
 
 .mini-time {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-primary);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--neon-green, #00ff88);
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+  font-variant-numeric: tabular-nums;
 }
 
 .timer-mini-info {
   flex: 1;
+  position: relative;
+  z-index: 2;
 }
 
 .mini-task {
   font-size: 0.85rem;
-  color: var(--text-primary);
+  color: #fff;
   display: block;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .mini-status {
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--neon-green, #00ff88);
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
 }
 
 .mini-stop-btn {
-  background: var(--error-color);
-  color: white;
-  border: none;
-  width: 24px;
-  height: 24px;
+  background: rgba(255, 68, 68, 0.2);
+  color: #ff6666;
+  border: 1px solid #ff4444;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 2;
 }
 
 .mini-stop-btn:hover {
   background: #ff4444;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .timer-container {
-    width: 220px;
-    height: 220px;
+  .modal {
+    width: 95%;
+    padding: 1rem;
+    margin: 1rem;
   }
-  
+
+  .timer-container {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 1rem;
+  }
+
   .time {
-    font-size: 2rem;
+    font-size: 1.8rem;
+  }
+
+  .label {
+    font-size: 0.85rem;
+  }
+
+  .timer-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .timer-info {
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .info-label {
+    font-size: 0.7rem;
+  }
+
+  .info-value {
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .timer-minimized {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .timer-mini-circle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mini-time {
+    font-size: 0.65rem;
+  }
+
+  .mini-task {
+    font-size: 0.75rem;
+  }
+
+  .mini-status {
+    font-size: 0.65rem;
+  }
+
+  .mini-stop-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    margin: 0;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-overlay {
+    align-items: flex-end;
+  }
+
+  .timer-container {
+    width: 180px;
+    height: 180px;
+  }
+
+  .time {
+    font-size: 1.5rem;
+  }
+
+  .timer-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .timer-minimized {
+    bottom: 0.75rem;
+    right: 0.75rem;
+    left: auto;
+    max-width: calc(100vw - 1.5rem);
+  }
+
+  .timer-mini-info {
+    max-width: 100px;
+  }
+
+  .mini-task {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Landscape mode on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .timer-container {
+    width: 150px;
+    height: 150px;
+    margin: 0.5rem auto;
+  }
+
+  .time {
+    font-size: 1.3rem;
+  }
+
+  .timer-info {
+    margin-bottom: 0.75rem;
+  }
+
+  .timer-header {
+    margin-bottom: 0.5rem;
   }
 }
